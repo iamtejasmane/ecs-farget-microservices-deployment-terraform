@@ -13,7 +13,6 @@ const PASSWORD = process.env.DB_PASSWORD
 const HOST = process.env.DB_HOST || "localhost"
 const DB_PORT = process.env.DB_PORT || 3306
 
-console.log(process.env)
 // Create an instance of a sequlize to access the database
 const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, {
   host: HOST,
