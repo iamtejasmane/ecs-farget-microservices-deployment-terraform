@@ -3,9 +3,15 @@ const { Sequelize, DataTypes } = require("sequelize")
 // Import table structure from models
 const cabModel = require("../models/cab")
 
+// Get credentials
+const DATABASE = process.env.DATABASE
+const USERNAME = process.env.USER
+const PASSWORD = process.env.PASSWORD
+const HOST = process.env.HOST || "localhost"
+
 // Create an instance of a sequlize to access the database
-const sequelize = new Sequelize("afourathon", "root", "password", {
-  host: "127.0.0.1",
+const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, {
+  host: HOST,
   dialect: "mysql",
 })
 
