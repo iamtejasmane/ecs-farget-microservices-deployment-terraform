@@ -1,5 +1,4 @@
 const { Sequelize, DataTypes } = require("sequelize")
-require("dotenv").config()
 
 // Import table structure from models
 const driverModel = require("../models/driver")
