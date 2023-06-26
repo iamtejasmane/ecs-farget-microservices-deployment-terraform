@@ -1,0 +1,49 @@
+    .logo{
+    font-style: normal;
+    font-weight: bolder;
+    font-size: 22px;
+    margin-top: 15px;
+}
+
+.logo-bar{
+    background-color: #F8D442;
+    height: 40px;
+}
+
+.welcome-text{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 49px;
+}
+
+.card-cab{
+    background-color: #F0F9FF !important;
+}
+
+.card-button{
+    border-color: black !important;
+}
+.card-driver{
+    background-color: #FEF6FB !important;
+}
+
+.list-header{
+    color: #000;
+    text-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    font-size: 22px;
+    font-family: Montserrat;
+    font-weight: 700;
+}
+
+.form-section{
+    display: flex;
+    justify-content: center;
+    margin-top: 10%;
+}
+
+.submit-button{
+    border-color: black !important;
+    width: 500px;
+    border-radius: 50px !important;
+}
