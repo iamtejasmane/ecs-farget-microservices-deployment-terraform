@@ -35,8 +35,11 @@ router.get("/", async (req, res) => {
 // Get a driver by driverId
 router.get("/:driverId", async (req, res) => {
   try {
-    const driver = await Driver.findByPk(req.params.driverdriverId)
-    res.json(driver)
+    const driver = await Driver.findByPk(req.params.driverId)
+    if(driver){
+      res.json(driver)
+    }
+    res.status(404).json({ error: "Driver not found" })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: "Unable to fetch a driver" })

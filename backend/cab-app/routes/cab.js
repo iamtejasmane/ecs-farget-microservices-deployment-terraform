@@ -36,7 +36,10 @@ router.get("/", async (req, res) => {
 router.get("/:cabId", async (req, res) => {
   try {
     const cabs = await Cab.findByPk(req.params.cabId)
-    res.json(cabs)
+    if(cabs){
+      res.json(cabs)
+    }
+    res.status(404).json({ error: "Cab not found" })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: "Unable to fetch cabs" })
