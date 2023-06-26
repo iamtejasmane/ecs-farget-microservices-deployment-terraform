@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CarRentalIcon from '@mui/icons-material/CarRental';
 import PeopleIcon from '@mui/icons-material/People';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
     const Item = styled(Paper)(({ theme }) => ({
@@ -17,20 +18,20 @@ const Home = () => {
         backgroundColor: '#fffaf4',
         marginLeft: '200px',
         marginTop: '10%'
-      }));
-    return(
+    }));
+    return (
         <>
             <Box sx={{ width: '80%' }}>
                 <Stack>
                     <Item className='welcome-text'>Welcome, Lorem!</Item>
                 </Stack>
             </Box>
-            <Box className='flex-cards' sx={{mt:10 , display: 'flex', justifyContent: 'space-around'}}>
-                <Card className='card-cab' sx={{ width: 200 , m: 3 , height: 150, borderRadius: '16px', p:1}}>
+            <Box className='flex-cards' sx={{ mt: 10, display: 'flex', justifyContent: 'space-around' }}>
+                <Card className='card-cab' sx={{ width: 200, m: 3, height: 150, borderRadius: '16px', p: 1 }}>
                     <CardContent>
-                        <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Box>
-                                <CarRentalIcon sx={{fontSize: '2rem'}}/>
+                                <CarRentalIcon sx={{ fontSize: '2rem' }} />
                                 <Typography>
                                     cabs
                                 </Typography>
@@ -39,20 +40,22 @@ const Home = () => {
                                 50
                             </Typography>
                         </Box>
-                      
+
                     </CardContent>
-                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                        <Button variant="outlined" sx={{color: 'black', width: 150}} className='card-button'>
-                            Add Cab
-                        </Button>
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Link to="/addCab">
+                            <Button variant="outlined" sx={{ color: 'black', width: 150 }} className='card-button'>
+                                Add Cab
+                            </Button>
+                        </Link>
                     </Box>
                 </Card>
 
-                <Card className='card-driver' sx={{ width: 200 , m: 3 , height: 150, borderRadius: '16px', p:1}}>
+                <Card className='card-driver' sx={{ width: 200, m: 3, height: 150, borderRadius: '16px', p: 1 }}>
                     <CardContent>
-                        <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Box>
-                                <PeopleIcon sx={{fontSize: '2rem'}}/>
+                                <PeopleIcon sx={{ fontSize: '2rem' }} />
                                 <Typography>
                                     cabs
                                 </Typography>
@@ -61,12 +64,14 @@ const Home = () => {
                                 50
                             </Typography>
                         </Box>
-                      
+
                     </CardContent>
-                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                        <Button variant="outlined" sx={{color: 'black', width: 150}} className='card-button'>
-                            Add Driver
-                        </Button>
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Link to="/addDriver">
+                            <Button variant="outlined" sx={{ color: 'black', width: 150 }} className='card-button'>
+                                Add Driver
+                            </Button>
+                        </Link>
                     </Box>
                 </Card>
             </Box>

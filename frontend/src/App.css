@@ -47,3 +47,11 @@
     width: 500px;
     border-radius: 50px !important;
 }
+
+.open-modal{
+    background:none;
+    border:none;
+    margin:0;
+    padding:0;
+    cursor: pointer;
+}
