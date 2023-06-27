@@ -21,7 +21,7 @@ const myHelper = {
     }
   };
 
-const AddCab = () => {
+const UpdateCab = () => {
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
@@ -34,7 +34,7 @@ const AddCab = () => {
             <Box className='form-section'>
                 <Box component="form" onSubmit={handleSubmit(handleOnSubmit)} sx={{width:500}}>
                     <Typography variant="h4" component="h4" sx={{textAlign: 'center'}}>
-                        Add Cab
+                        Update Cab
                     </Typography>
                     <Grid item sx={{mt: 3}}>
                             <Controller
@@ -103,7 +103,7 @@ const AddCab = () => {
 
                         <Grid >
                         <Button type="submit" variant="outlined" sx={{color: 'black', mt:3, boxShadow: 1}} className='submit-button'>
-                                Add Driver
+                                Update Cab
                             </Button>
                         </Grid>
                 </Box>
@@ -112,4 +112,4 @@ const AddCab = () => {
     )
 }
 
-export default AddCab
+export default UpdateCab

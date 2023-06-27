@@ -10,18 +10,21 @@ import {
 
 
 const myHelper = {
-    cab_model: {
-        required: "Cab model / name is Required"
+    driver_name: {
+        required: "Driver name is Required"
     },
-    cab_number: {
-      required: "Cab number is Required"
+    email: {
+      required: "Email is Required",
+      pattern: "Invalid Email Address"
     },
-    cab_color: {
-        required: "Cab color is Required"
+    mobile_no: {
+        required: "Mobile number is Required",
+        maxLength: "Number Can't be more than 10 digits",
+        minLength: "Number Can't be less than 10 digits"
     }
   };
 
-const AddCab = () => {
+const UpdateDriver = () => {
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
@@ -34,12 +37,12 @@ const AddCab = () => {
             <Box className='form-section'>
                 <Box component="form" onSubmit={handleSubmit(handleOnSubmit)} sx={{width:500}}>
                     <Typography variant="h4" component="h4" sx={{textAlign: 'center'}}>
-                        Add Cab
+                        Update Driver details
                     </Typography>
                     <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="cab_model"
+                            name="driver_name"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -50,9 +53,9 @@ const AddCab = () => {
                                 {...field}
                                 type="text"
                                 fullWidth
-                                label="Cab Model"
+                                label="Driver Name"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.cab_model[error.type] : ""}
+                                helperText={error ? myHelper.driver_name[error.type] : ""}
                                 />
                             )}
                             />
@@ -60,19 +63,20 @@ const AddCab = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="cab_registration_number"
+                            name="email"
                             defaultValue=""
                             rules={{
                                 required: true,
+                                pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
                             }}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
                                 {...field}
-                                type="text"
+                                type="email"
                                 fullWidth
-                                label="Cab Number"
+                                label="Driver Email"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.cab_number[error.type] : ""}
+                                helperText={error ? myHelper.email[error.type] : ""}
                                 />
                             )}
                             />
@@ -81,7 +85,7 @@ const AddCab = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="cab_color"
+                            name="driver_no"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -93,9 +97,32 @@ const AddCab = () => {
                                 {...field}
                                 type="number"
                                 fullWidth
-                                label="Cab Color"
+                                label="Driver Mobile no"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.cab_color[error.type] : ""}
+                                helperText={error ? myHelper.mobile_no[error.type] : ""}
+                                />
+                            )}
+                            />
+                        </Grid>
+
+                        <Grid item sx={{mt: 3}}>
+                            <Controller
+                            control={control}
+                            name="driver_license"
+                            defaultValue=""
+                            rules={{
+                                required: true,
+                                maxLength: 10,
+                                minLength: 10
+                            }}
+                            render={({ field, fieldState: { error } }) => (
+                                <TextField
+                                {...field}
+                                type="text"
+                                fullWidth
+                                label="Driver License"
+                                error={error !== undefined}
+                                helperText={error ? myHelper.mobile_no[error.type] : ""}
                                 />
                             )}
                             />
@@ -103,7 +130,7 @@ const AddCab = () => {
 
                         <Grid >
                         <Button type="submit" variant="outlined" sx={{color: 'black', mt:3, boxShadow: 1}} className='submit-button'>
-                                Add Driver
+                                Update Driver
                             </Button>
                         </Grid>
                 </Box>
@@ -112,4 +139,4 @@ const AddCab = () => {
     )
 }
 
-export default AddCab
+export default UpdateDriver

@@ -14,6 +14,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Avatar from '@mui/material/Avatar';
 import DetailsModal from './modal';
+import { Link } from 'react-router-dom';
 
 const TableLayout = ({ rows, columns, tablename }) => {
   const [page, setPage] = useState(0);
@@ -44,8 +45,12 @@ const TableLayout = ({ rows, columns, tablename }) => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 10 }}>
           <Box><p className='list-header'>{tablename} List</p></Box>
           <Box>
-            <Button variant="outlined" sx={{ color: 'black', width: 180, mt: 2.5 }} className='card-button'>
-              Add {tablename}
+            <Button component={Link} to={tablename === 'Driver' ? '/addDriver': '/addCab' } 
+              variant="outlined" 
+              sx={{ color: 'black', width: 180, mt: 2.5 }} 
+              className='card-button'
+              >
+                Add {tablename}
             </Button>
           </Box>
         </Box>
@@ -90,9 +95,13 @@ const TableLayout = ({ rows, columns, tablename }) => {
                             <TableCell key={column.id} align={column.align}>
                               {column.id === 'edit' ? (
                                 <>
-                                  <Box>
-                                    <EditIcon sx={{ width: 50 }} />
-                                    <DeleteIcon sx={{ width: 50 }} />
+                                  <Box >
+                                    <Link to={tablename === 'Driver' ? `/updateDriver/${row.id}` : `/updatecab/${row.id}` } >
+                                      <EditIcon sx={{ width: 50 }} />
+                                    </Link>
+                                    <Link>
+                                      <DeleteIcon sx={{ width: 50 }} />
+                                    </Link>
                                   </Box>
                                 </>
                               ) : (
