@@ -33,4 +33,6 @@ jobs:
 
       - name: Deploy to AWS ECS Fargate
         run: |
-          aws ecs update-service --cluster afourathon-cluster --service driver_app_service --force-new-deployment
+          set -e
+          aws ecs describe-services --cluster afourathon-cluster --services driver_app_service || (echo "Service not found"; exit 1)
+          aws ecs update-service --cluster afourathon-cluster --service driver_app_service --force-new-deployment || (echo "Service update failed"; exit 1)
