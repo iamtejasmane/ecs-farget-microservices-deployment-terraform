@@ -33,6 +33,7 @@ resource "aws_ecs_task_definition" "cab_app_task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
+          "awslogs-create-group": "true",
           "awslogs-group": "cab-app-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "cab-app"
@@ -74,6 +75,7 @@ resource "aws_ecs_task_definition" "driver_app_task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
+          "awslogs-create-group": "true",
           "awslogs-group": "driver-app-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "driver-app"
@@ -115,6 +117,7 @@ resource "aws_ecs_task_definition" "cab_assignment_app_task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
+          "awslogs-create-group": "true",
           "awslogs-group": "cab-assignment-app-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "cab-assignment-app"
@@ -205,6 +208,12 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 POLICY
 }
 
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attachment" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+
 resource "aws_iam_role" "ecs_task_role" {
   name = "ecs-task-role"
 
@@ -228,6 +237,29 @@ resource "aws_iam_role_policy_attachment" "ecs_s3_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
   role       = aws_iam_role.ecs_task_execution_role.name
 }
+
+resource "aws_iam_role_policy" "ecs_task_execution_role_policy" {
+  name   = "ecs-task-execution-role-policy"
+  role   = aws_iam_role.ecs_task_execution_role.name
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CloudWatchLogsPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    }
+  ]
+}
+POLICY
+}
+
 
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = var.vpc_id
