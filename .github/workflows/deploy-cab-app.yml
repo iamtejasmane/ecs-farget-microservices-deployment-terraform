@@ -1,0 +1,38 @@
+name: Deploy Cab App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: backend/cab-app
+          push: true
+          tags: 184073611589.dkr.ecr.us-east-1.amazonaws.com/cab-app:latest
+
+      - name: Deploy to AWS ECS Fargate
+        run: |
+          set -e
+          aws ecs describe-services --cluster afourathon-cluster --services cab-app-service || (echo "Service not found"; exit 1)
+          aws ecs update-service --cluster afourathon-cluster --service cab-app-service --force-new-deployment || (echo "Service update failed"; exit 1)
