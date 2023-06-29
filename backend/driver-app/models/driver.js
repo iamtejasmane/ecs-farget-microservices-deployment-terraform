@@ -22,5 +22,8 @@ module.exports = (sequelize, type) => {
     driverProfilePicture: {
       type: type.STRING,
     },
+    driverLicenseNo: {
+      type: type.STRING,
+    },
   })
 }

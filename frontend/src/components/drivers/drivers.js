@@ -1,14 +1,22 @@
-import * as React from 'react';
+import React,{ useEffect } from 'react';
 import TableLayout from '../layout/tablelayout';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAllDrivers } from '../../store/actions/driverActions';
 
 const Drivers = () => {
+  const dispatch = useDispatch();
+  const drivers = useSelector((state) => state.drivers)
+
+  useEffect(() => {
+    dispatch(fetchAllDrivers());
+  }, [dispatch]);
 
     const tableName = "Driver";
     const columns = [
-        { id: "profileUrl", label: "" },
-        { id: "name", label: "Name", align: "center" },
-        { id: "email", label: "email", align: 'center'},
-        { id: "contact", label: "Mobile Number", align: 'center'},
+        { id: "driverProfilePicture", label: "" },
+        { id: "driverName", label: "Name", align: "center" },
+        { id: "driverEmail", label: "email", align: 'center'},
+        { id: "driverPhoneNumber", label: "Mobile Number", align: 'center'},
         { id: "edit", label: "", minWidth: 100}
       ];
       
@@ -38,7 +46,8 @@ const Drivers = () => {
 
     return(
         <>
-            <TableLayout rows={rows} columns={columns} tablename={tableName}/>
+            <TableLayout rows={drivers} columns={columns} tablename={tableName}/>
+            
         </>
     )
 }

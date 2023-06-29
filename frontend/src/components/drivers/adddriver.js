@@ -7,20 +7,26 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import { useDispatch } from 'react-redux';
+import { createDriver } from '../../store/actions/driverActions';
+import { useNavigate   } from 'react-router-dom';
 
 
 const myHelper = {
-    driver_name: {
+    driverName: {
         required: "Driver name is Required"
     },
-    email: {
+    driverEmail: {
       required: "Email is Required",
       pattern: "Invalid Email Address"
     },
-    mobile_no: {
+    driverPhoneNumber: {
         required: "Mobile number is Required",
         maxLength: "Number Can't be more than 10 digits",
         minLength: "Number Can't be less than 10 digits"
+    },
+    driverLicenseNo: {
+        required: "Driver License is required"
     }
   };
 
@@ -28,9 +34,13 @@ const AddDriver = () => {
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     
       const handleOnSubmit = (evt) => {
         console.log(evt);
+        dispatch(createDriver(evt))
+        navigate('/drivers')
       };
     return (
         <>
@@ -42,7 +52,7 @@ const AddDriver = () => {
                     <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="driver_name"
+                            name="driverName"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -55,7 +65,7 @@ const AddDriver = () => {
                                 fullWidth
                                 label="Driver Name"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.driver_name[error.type] : ""}
+                                helperText={error ? myHelper.driverName[error.type] : ""}
                                 />
                             )}
                             />
@@ -63,7 +73,7 @@ const AddDriver = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="email"
+                            name="driverEmail"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -76,7 +86,7 @@ const AddDriver = () => {
                                 fullWidth
                                 label="Driver Email"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.email[error.type] : ""}
+                                helperText={error ? myHelper.driverEmail[error.type] : ""}
                                 />
                             )}
                             />
@@ -85,7 +95,7 @@ const AddDriver = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="driver_no"
+                            name="driverPhoneNumber"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -99,7 +109,7 @@ const AddDriver = () => {
                                 fullWidth
                                 label="Driver Mobile no"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.mobile_no[error.type] : ""}
+                                helperText={error ? myHelper.driverPhoneNumber[error.type] : ""}
                                 />
                             )}
                             />
@@ -108,12 +118,10 @@ const AddDriver = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="driver_license"
+                            name="driverLicenseNo"
                             defaultValue=""
                             rules={{
                                 required: true,
-                                maxLength: 10,
-                                minLength: 10
                             }}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
@@ -122,7 +130,7 @@ const AddDriver = () => {
                                 fullWidth
                                 label="Driver License"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.mobile_no[error.type] : ""}
+                                helperText={error ? myHelper.driverLicenseNo[error.type] : ""}
                                 />
                             )}
                             />
