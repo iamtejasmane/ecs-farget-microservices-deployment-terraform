@@ -1,7 +1,9 @@
-import {useEffect} from 'react';
+// import {useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { fetchDriver } from '../../store/actions/driverActions';
 
 const style = {
   position: 'absolute',
@@ -16,9 +18,14 @@ const style = {
 };
 
 const DetailsModal = ({open, onClose, id}) => {
-    useEffect(() => {
-        console.log(id)
-    },[])
+  // const dispatch = useDispatch();
+  // const drivers = useSelector((state) => state.drivers)
+
+  // useEffect(() => {
+  //   dispatch(fetchDriver(id));
+  //   console.count("count")
+  // }, [id,dispatch]);
+
 
   return (
     <>

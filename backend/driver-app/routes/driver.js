@@ -8,11 +8,12 @@ const router = express.Router()
 // Create a driver
 router.post("/", async (req, res) => {
   try {
-    const { driverName, driverEmail, driverPhoneNumber } = req.body
+    const { driverName, driverEmail, driverPhoneNumber, driverLicenseNo } = req.body
     const driver = await Driver.create({
       driverName,
       driverEmail,
       driverPhoneNumber,
+      driverLicenseNo,
     })
     res.json(driver)
   } catch (error) {
@@ -50,12 +51,13 @@ router.get("/:driverId", async (req, res) => {
 router.put("/:driverId", async (req, res) => {
   try {
     const { driverId } = req.params
-    const { driverName, driverEmail, driverPhoneNumber } = req.body
+    const { driverName, driverEmail, driverPhoneNumber, driverLicenseNo } = req.body
     const driver = await Driver.findByPk(driverId)
     if (driver) {
       driver.driverName = driverName
       driver.driverEmail = driverEmail
       driver.driverPhoneNumber = driverPhoneNumber
+      driver.driverLicenseNo = driverLicenseNo
       await driver.save()
       res.json(driver)
     } else {
