@@ -38,7 +38,7 @@ function authorizeUser(req, res, next) {
   }
 }
 
-app.use(authorizeUser)
+// app.use(authorizeUser)
 
 // Routes
 app.use("/drivers", driverRoutes)
@@ -49,3 +49,5 @@ const PORT = 3000
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`.bgBlue)
 })
+
+module.exports = app
