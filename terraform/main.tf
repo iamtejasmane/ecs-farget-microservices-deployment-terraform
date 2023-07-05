@@ -127,6 +127,47 @@ resource "aws_ecs_task_definition" "cab_assignment_app_task" {
   ]
   DEFINITION
 }
+resource "aws_ecs_task_definition" "web_app_task" {
+  family                   = "web-app"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu = "256" 
+  memory = "512"
+
+  container_definitions = <<DEFINITION
+  [
+    {
+      "name": "web-app",
+      "image": "${aws_ecr_repository.web_app.repository_url}:latest",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "memoryReservation": 512,
+      "cpu": 256,
+      "environmentFiles": [
+        {
+          "value": "arn:aws:s3:::afourathon/env_files/.env",
+          "type": "s3"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "web-app-logs",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "web-app"
+        }
+      }
+    }
+  ]
+  DEFINITION
+}
 
 resource "aws_ecs_service" "cab_app_service" {
   name            = "cab-app-service"
@@ -141,6 +182,7 @@ resource "aws_ecs_service" "cab_app_service" {
     assign_public_ip = true
   }
 }
+
 
 resource "aws_ecs_service" "driver_app_service" {
   name            = "driver-app-service"
@@ -160,6 +202,20 @@ resource "aws_ecs_service" "cab_assignment_app_service" {
   name            = "cab-assignment-app-service"
   cluster         = aws_ecs_cluster.fargate_cluster.id
   task_definition = aws_ecs_task_definition.cab_assignment_app_task.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = [aws_subnet.public_subnet.id]
+    security_groups  = [aws_security_group.ecs_service_security_group.id]
+    assign_public_ip = true
+  }
+}
+
+resource "aws_ecs_service" "web_app_service" {
+  name            = "web-app-service"
+  cluster         = aws_ecs_cluster.fargate_cluster.id
+  task_definition = aws_ecs_task_definition.web_app_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -287,6 +343,13 @@ resource "aws_ecr_repository" "driver_app" {
 
 resource "aws_ecr_repository" "cab_assignment_app" {
   name = "cab-assignment-app"
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_ecr_repository" "web_app" {
+  name = "web-app"
   lifecycle {
     prevent_destroy = true
   }
