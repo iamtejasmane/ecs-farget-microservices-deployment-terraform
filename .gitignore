@@ -1,3 +1,5 @@
 terraform.tfstate
 node_modules
 .env
+mochawesome-report
+uploads
