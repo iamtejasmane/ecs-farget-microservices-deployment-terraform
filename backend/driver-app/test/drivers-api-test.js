@@ -1,79 +1,39 @@
 const chai = require("chai")
 const chaiHttp = require("chai-http")
-const jwt = require("jsonwebtoken")
-const app = require("../app")
-const expect = chai.expect
+const app = require("../app") // Assuming your Express app is defined in app.js
+const { Driver } = require("../db/db")
 
 chai.use(chaiHttp)
+const expect = chai.expect
+
+// Clear the database and create a test driver before running the tests
+before(async () => {
+  // await Driver.destroy({ where: {} }) // Clear the database table
+  await Driver.create({
+    driverName: "John Doe",
+    driverEmail: "john.doe@example.com",
+    driverPhoneNumber: "1234567890",
+    driverProfilePictureKey: null,
+  })
+})
 
 describe("Drivers API", () => {
-  // Test the create driver route
+  // Test the POST /drivers endpoint
   describe("POST /drivers", () => {
     it("should create a new driver", (done) => {
-      const driver = {
-        driverName: "John Doe",
-        driverEmail: "johndoe@example.com",
-        driverPhoneNumber: "1234567890",
-      }
-
-      // const token = jwt.sign({ id: 1 }, process.env.JWT_SECRET)
-
       chai
         .request(app)
         .post("/drivers")
-        // .set("token", token)
-        .send(driver)
+        .attach("driverProfilePicture", "uploads/driver-1.jpg")
+        .field("driverName", "Jane Smith")
+        .field("driverEmail", "jane.smith@example.com")
+        .field("driverPhoneNumber", "9876543210")
         .end((err, res) => {
-          expect(res).to.have.status(200)
-          expect(res.body).to.have.property("driverName", "John Doe")
+          expect(res).to.have.status(201)
+          expect(res.body).to.have.property("driverName", "Jane Smith")
           expect(res.body).to.have.property(
             "driverEmail",
-            "johndoe@example.com"
-          )
-          expect(res.body).to.have.property("driverPhoneNumber", "1234567890")
-          done()
-        })
-    })
-  })
-
-  // Test the get driver route
-  describe("GET /drivers/:driverId", () => {
-    it("should get a driver by driverId", (done) => {
-      chai
-        .request(app)
-        .get("/drivers/1")
-        .end((err, res) => {
-          expect(res).to.have.status(200)
-          expect(res.body).to.have.property("driverName", "John Doe")
-          expect(res.body).to.have.property(
-            "driverEmail",
-            "johndoe@example.com"
-          )
-          expect(res.body).to.have.property("driverPhoneNumber", "1234567890")
-          done()
-        })
-    })
-  })
-
-  // Test the update driver route
-  describe("PUT /drivers/:driverId", () => {
-    it("should update a driver", (done) => {
-      const updatedDriver = {
-        driverName: "Updated Name",
-        driverEmail: "updated@example.com",
-        driverPhoneNumber: "9876543210",
-      }
-
-      chai
-        .request(app)
-        .put("/drivers/1")
-        .send(updatedDriver)
-        .end((err, res) => {
-          expect(res).to.have.status(200)
-          expect(res.body).to.have.property("driverName", "Updated Name")
-          expect(res.body).to.have.property(
-            "driverEmail",
-            "updated@example.com"
+            "jane.smith@example.com"
           )
           expect(res.body).to.have.property("driverPhoneNumber", "9876543210")
           done()
@@ -81,23 +41,111 @@ describe("Drivers API", () => {
     })
   })
 
-  // Test the delete driver route
-  describe("DELETE /drivers/:driverId", () => {
-    it("should delete a driver", (done) => {
+  // Test the GET /drivers endpoint
+  describe("GET /drivers", () => {
+    it("should get all drivers", (done) => {
       chai
         .request(app)
-        .delete("/drivers/1")
+        .get("/drivers")
         .end((err, res) => {
           expect(res).to.have.status(200)
+          expect(res.body).to.be.an("array")
+          expect(res.body).to.have.lengthOf(2) // Including the test driver created in the before() hook
+          done()
+        })
+    })
+  })
 
-          // Verify that the driver is deleted
-          chai
-            .request(app)
-            .get("/drivers/1")
-            .end((err, res) => {
-              expect(res).to.have.status(404)
-              done()
-            })
+  // Test the GET /drivers/:driverId endpoint
+  describe("GET /drivers/:driverId", () => {
+    it("should get a driver by driverId", (done) => {
+      const driverId = 1 // Assuming the test driver has an ID of 1
+      chai
+        .request(app)
+        .get(`/drivers/${driverId}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.have.property("driverName", "John Doe")
+          expect(res.body).to.have.property(
+            "driverEmail",
+            "john.doe@example.com"
+          )
+          expect(res.body).to.have.property("driverPhoneNumber", "1234567890")
+          done()
+        })
+    })
+
+    it("should return 404 if driver not found", (done) => {
+      const driverId = 999 // Assuming there's no driver with ID 999
+      chai
+        .request(app)
+        .get(`/drivers/${driverId}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404)
+          expect(res.body).to.have.property("error", "Driver not found")
+          done()
+        })
+    })
+  })
+
+  // Test the PUT /drivers/:driverId endpoint
+  describe("PUT /drivers/:driverId", () => {
+    it("should update a driver", (done) => {
+      const driverId = 1 // Assuming the test driver has an ID of 1
+      chai
+        .request(app)
+        .put(`/drivers/${driverId}`)
+        .attach("driverProfilePicture", "uploads/driver-1.jpg")
+        .field("driverName", "John Doe Updated")
+        .field("driverEmail", "john.doe.updated@example.com")
+        .field("driverPhoneNumber", "5555555555")
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.have.property("driverName", "John Doe Updated")
+          expect(res.body).to.have.property(
+            "driverEmail",
+            "john.doe.updated@example.com"
+          )
+          expect(res.body).to.have.property("driverPhoneNumber", "5555555555")
+          done()
+        })
+    })
+
+    it("should return 404 if driver not found", (done) => {
+      const driverId = 999 // Assuming there's no driver with ID 999
+      chai
+        .request(app)
+        .put(`/drivers/${driverId}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404)
+          expect(res.body).to.have.property("error", "Driver not found")
+          done()
+        })
+    })
+  })
+
+  // Test the DELETE /drivers/:driverId endpoint
+  describe("DELETE /drivers/:driverId", () => {
+    it("should delete a driver", (done) => {
+      const driverId = 1 // Assuming the test driver has an ID of 1
+      chai
+        .request(app)
+        .delete(`/drivers/${driverId}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          done()
+        })
+    })
+
+    it("should return 404 if driver not found", (done) => {
+      const driverId = 999 // Assuming there's no driver with ID 999
+      chai
+        .request(app)
+        .delete(`/drivers/${driverId}`)
+        .end((err, res) => {
+          expect(res).to.have.status(404)
+          expect(res.body).to.have.property("error", "Driver not found")
+          done()
         })
     })
   })
