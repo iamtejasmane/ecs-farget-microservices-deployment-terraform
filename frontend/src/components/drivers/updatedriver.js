@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -7,30 +7,47 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-
+import { useSelector, useDispatch } from 'react-redux';
+import { updateDriver } from '../../store/actions/driverActions';
+import { useParams, useNavigate   } from 'react-router-dom';
 
 const myHelper = {
-    driver_name: {
+    driverName: {
         required: "Driver name is Required"
     },
-    email: {
+    driverEmail: {
       required: "Email is Required",
       pattern: "Invalid Email Address"
     },
-    mobile_no: {
+    driverPhoneNumber: {
         required: "Mobile number is Required",
         maxLength: "Number Can't be more than 10 digits",
         minLength: "Number Can't be less than 10 digits"
+    },
+    driverLicenseNo: {
+        required: "Driver License is required"
     }
   };
 
 const UpdateDriver = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const drivers = useSelector(state =>state.drivers);
+    const driver = drivers.find((driver) => driver.driverId.toString() === id)
+
+    useEffect(() => {
+        console.log(driver)
+    },[driver])
+
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
     
       const handleOnSubmit = (evt) => {
         console.log(evt);
+        dispatch(updateDriver(id,evt))
+        navigate('/drivers')
       };
     return (
         <>
@@ -42,8 +59,8 @@ const UpdateDriver = () => {
                     <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="driver_name"
-                            defaultValue=""
+                            name="driverName"
+                            defaultValue={driver ? driver.driverName : ''}
                             rules={{
                                 required: true,
                             }}
@@ -63,8 +80,8 @@ const UpdateDriver = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="email"
-                            defaultValue=""
+                            name="driverEmail"
+                            defaultValue={driver ? driver.driverEmail : ''}
                             rules={{
                                 required: true,
                                 pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
@@ -85,8 +102,8 @@ const UpdateDriver = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="driver_no"
-                            defaultValue=""
+                            name="driverPhoneNumber"
+                            defaultValue={driver ? driver.driverPhoneNumber : ''}
                             rules={{
                                 required: true,
                                 maxLength: 10,
@@ -108,12 +125,10 @@ const UpdateDriver = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="driver_license"
-                            defaultValue=""
+                            name="driverLicenseNo"
+                            defaultValue={driver ? driver.driverLicenseNo : ''}
                             rules={{
                                 required: true,
-                                maxLength: 10,
-                                minLength: 10
                             }}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
