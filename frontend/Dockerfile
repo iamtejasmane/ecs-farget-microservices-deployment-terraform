@@ -1,19 +1,9 @@
-FROM node:16.13.2-alpine as build
-
+FROM node:16.13.2-alpine
 WORKDIR /app
-
-COPY package*.json ./
+COPY ./package.json ./
+COPY ./package-lock.json ./
 RUN npm install
-
-COPY . .
-
+COPY  . .
 RUN npm run build
-
-FROM nginx:1.21.4-alpine
-
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+CMD npm start
