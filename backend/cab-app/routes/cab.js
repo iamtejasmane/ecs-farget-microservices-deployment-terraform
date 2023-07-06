@@ -8,11 +8,12 @@ const router = express.Router()
 // Create a cab
 router.post("/", async (req, res) => {
   try {
-    const { cabRegistrationNumber, cabModel, cabColour } = req.body
+    const { cabRegistrationNumber, cabModel, cabColour, cabImage } = req.body
     const cab = await Cab.create({
       cabRegistrationNumber,
       cabModel,
       cabColour,
+      cabImage
     })
     res.json(cab)
   } catch (error) {

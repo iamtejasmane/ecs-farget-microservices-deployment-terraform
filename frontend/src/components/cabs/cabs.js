@@ -1,14 +1,23 @@
-import * as React from 'react';
+import {useEffect} from 'react';
 import TableLayout from '../layout/tablelayout';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAllCabs } from '../../store/actions/cabActions';
 
 const Cabs = () => {
+  const dispatch = useDispatch();
+  const cabs = useSelector((state) => state.cabs)
+
+  useEffect(() => {
+    dispatch(fetchAllCabs());
+  }, [dispatch]);
+
 
     const tableName = "Cab";
     const columns = [
-        { id: "profileUrl", label: "" },
-        { id: "name", label: "Name", align: "center" },
-        { id: "email", label: "email", align: 'center'},
-        { id: "contact", label: "Mobile Number", align: 'center'},
+        { id: "cabImage", label: "" },
+        { id: "cabModel", label: "Car Model", align: "center" },
+        { id: "cabColour", label: "Car Colour", align: 'center'},
+        { id: "cabRegistrationNumber", label: "Cab Number", align: 'center'},
         { id: "edit", label: "", minWidth: 100}
       ];
       
@@ -30,7 +39,7 @@ const Cabs = () => {
       ];
     return(
         <>
-            <TableLayout rows={rows} columns={columns} tablename={tableName}/>
+            <TableLayout rows={cabs} columns={columns} tablename={tableName}/>
         </>
     )
 }

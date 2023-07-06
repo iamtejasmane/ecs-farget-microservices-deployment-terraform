@@ -103,7 +103,7 @@ const AddCab = () => {
 
                         <Grid >
                         <Button type="submit" variant="outlined" sx={{color: 'black', mt:3, boxShadow: 1}} className='submit-button'>
-                                Add Driver
+                                Add Cab
                             </Button>
                         </Grid>
                 </Box>

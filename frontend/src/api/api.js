@@ -25,3 +25,24 @@ export const updateDriver = (id,data) => {
 export const deleteDriver = (id) => {
     return axios.delete(`${driverAppUrl}/drivers/${id}`)
 }
+
+export const fetchCabs = () => {
+    return axios.get(`${cabAppUrl}/cabs`)
+}
+
+export const fetchCab = (id) => {
+    console.log(`${cabAppUrl}/cabs/${id}`)
+    return axios.get(`${cabAppUrl}/cabs/${id}`)
+}
+
+export const createCab = (data) => {
+    return axios.post(`${cabAppUrl}/cabs`, data)
+}
+
+export const updateCab = (id,data) => {
+    return axios.put(`${cabAppUrl}/cabs/${id}`, data)
+}
+
+export const deleteCab = (id) => {
+    return axios.delete(`${cabAppUrl}/cabs/${id}`)
+}
