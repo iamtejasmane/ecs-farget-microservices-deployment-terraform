@@ -33,7 +33,7 @@ function authorizeUser(req, res, next) {
   }
 }
 
-app.use(authorizeUser)
+// app.use(authorizeUser)
 
 // Routes
 app.use("/cabs", cabRoutes)
@@ -43,3 +43,5 @@ const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`.green)
 })
+
+module.exports = app

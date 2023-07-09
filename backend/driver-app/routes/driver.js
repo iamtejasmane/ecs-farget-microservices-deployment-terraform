@@ -26,7 +26,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 // Routes for Drivers API
-
 // Create a driver
 router.post("/", upload.single("driverProfilePicture"), async (req, res) => {
   try {
@@ -38,7 +37,7 @@ router.post("/", upload.single("driverProfilePicture"), async (req, res) => {
     if (profilePictureFile) {
       // Upload the file to S3
       const uploadParams = {
-        Bucket: process.env.S3_BUCKET_NAME,
+        Bucket: process.env.S3_BUCKET_NAME_DRIVER,
         Key: profilePictureFile.filename,
         Body: fs.readFileSync(profilePictureFile.path),
       }
@@ -109,7 +108,7 @@ router.put(
           // Delete the previous profile picture from S3 if it exists
           if (driver.driverProfilePictureKey) {
             const deleteParams = {
-              Bucket: process.env.S3_BUCKET_NAME,
+              Bucket: process.env.S3_BUCKET_NAME_DRIVER,
               Key: driver.driverProfilePictureKey,
             }
             await s3.deleteObject(deleteParams).promise()
@@ -117,7 +116,7 @@ router.put(
 
           // Upload the new profile picture to S3
           const uploadParams = {
-            Bucket: process.env.S3_BUCKET_NAME,
+            Bucket: process.env.S3_BUCKET_NAME_DRIVER,
             Key: req.file.filename,
             Body: fs.readFileSync(req.file.path),
           }
@@ -155,14 +154,14 @@ router.delete("/:driverId", async (req, res) => {
       // Delete the profile picture from S3 if it exists
       if (driver.driverProfilePictureKey) {
         const deleteParams = {
-          Bucket: process.env.S3_BUCKET_NAME,
+          Bucket: process.env.S3_BUCKET_NAME_DRIVER,
           Key: driver.driverProfilePictureKey,
         }
         await s3.deleteObject(deleteParams).promise()
       }
 
       await driver.destroy()
-      res.sendStatus(200)
+      res.sendStatus(200).json({ message: "Driver deleted" })
     } else {
       res.status(404).json({ error: "Driver not found" })
     }
