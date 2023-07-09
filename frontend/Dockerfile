@@ -1,23 +1,8 @@
-# Use Node.js v18 as the base image
-FROM node:18
-
-# Set the working directory inside the container
+FROM node:16.13.2-alpine
 WORKDIR /app
-
-# Copy the package.json and package-lock.json files to the working directory
-COPY package.json package-lock.json ./
-
-# Install dependencies
+COPY ./package.json ./
+COPY ./package-lock.json ./
 RUN npm install
-
-# Copy the entire application code to the working directory
-COPY . .
-
-# Build the React app
-RUN npm run build
-
-# Expose port 3000 for the application
+COPY  . .
 EXPOSE 3000
-
-# Start the application
-CMD ["npm", "start"]
+CMD npm start

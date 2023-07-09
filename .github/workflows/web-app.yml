@@ -3,7 +3,7 @@ name: Deploy Web App
 on:
   push:
     branches:
-      - tejas
+      - prod
 
 jobs:
   build-and-deploy:

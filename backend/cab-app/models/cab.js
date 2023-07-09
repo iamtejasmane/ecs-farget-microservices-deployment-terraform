@@ -10,6 +10,6 @@ module.exports = (sequelize, type) => {
     cabRegistrationNumber: type.STRING,
     cabModel: type.STRING,
     cabColour: type.STRING,
-    cabImage: type.STRING,
+    cabImageKey: type.STRING,
   })
 }

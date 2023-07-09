@@ -19,7 +19,7 @@ module.exports = (sequelize, type) => {
       type: type.STRING,
       allowNull: false,
     },
-    driverProfilePicture: {
+    driverProfilePictureKey: {
       type: type.STRING,
     },
     driverLicenseNo: {
