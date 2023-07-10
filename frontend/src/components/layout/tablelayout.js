@@ -94,7 +94,7 @@ const TableLayout = ({ rows, columns, tablename }) => {
                                 </>
                               ) : (
                                 <>
-                                  {row[column.id]=== 'driverProfilePicture' || row[column.id]=== 'cabImage' ? (
+                                  {row[column.id]=== 'driverProfilePictureKey' || row[column.id]=== 'cabImageKey' ? (
                                     <>
                                       <Avatar sx={{ width: '50px !important', height: '50px !important' }} alt="Remy Sharp" variant='square' src={row[column.id]} />
                                     </>

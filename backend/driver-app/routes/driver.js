@@ -55,7 +55,7 @@ router.post("/", upload.single("driverProfilePicture"), async (req, res) => {
       driverName,
       driverEmail,
       driverPhoneNumber,
-      driverProfilePicture: profilePictureKey,
+      driverProfilePictureKey: profilePictureKey,
       driverLicenseNo
     })
 
@@ -163,7 +163,7 @@ router.delete("/:driverId", async (req, res) => {
       }
 
       await driver.destroy()
-      res.sendStatus(200).json({ message: "Driver deleted" })
+      res.status(200).json({ message: "Driver deleted" })
     } else {
       res.status(404).json({ error: "Driver not found" })
     }
