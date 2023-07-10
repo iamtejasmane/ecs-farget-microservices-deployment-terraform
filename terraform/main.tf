@@ -1,6 +1,109 @@
+# RDS MySQL Database
+
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id                  = var.vpc_id
+  availability_zone       = "us-east-1b"
+  cidr_block              = "172.31.16.0/20"
+  map_public_ip_on_launch = false
+}
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id                  = var.vpc_id
+  availability_zone       = "us-east-1c"
+  cidr_block              = "172.31.32.0/20"
+  map_public_ip_on_launch = false
+}
+
+resource "aws_db_subnet_group" "mysql_subnet_group" {
+  name       = "mysql-subnet-group"
+  subnet_ids = [ aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+} 
+# aws_subnet.public_subnet.id,
+
+resource "aws_security_group" "mysql_sg" {
+  name        = "mysql-sg"
+  description = "Security group for RDS MySQL"
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_security_group.ecs_service_security_group.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group_rule" "mysql_ingress" {
+  type              = "ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.mysql_sg.id
+  security_group_id = aws_security_group.ecs_service_security_group.id
+}
+
+data "aws_vpc" "main_vpc" {
+  id = var.vpc_id
+}
+
+resource "aws_db_parameter_group" "mysql_parameter_group" {
+  name   = "mysql-parameter-group"
+  family = "mysql5.7"
+  description = "Custom DB parameter group for MySQL 5.7"
+}
+
+resource "aws_security_group" "rds_security_group" {
+  name        = "rds-security-group"
+  description = "Security group for RDS DB instance"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.main_vpc.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_db_instance" "mysql_instance" {
+  allocated_storage    = 5
+  storage_type         = "gp2"
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t3.micro"
+  db_name              = var.db_name 
+  username             = var.username
+  password             = var.password
+  parameter_group_name = aws_db_parameter_group.mysql_parameter_group.name
+  db_subnet_group_name = aws_db_subnet_group.mysql_subnet_group.name
+
+  vpc_security_group_ids = [
+    aws_security_group.rds_security_group.id
+  ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+
+# ECS Cluster
 resource "aws_ecs_cluster" "fargate_cluster" {
   name = "afourathon-cluster"
 }
+
 
 resource "aws_ecs_task_definition" "cab_app_task" {
   family                   = "cab-app"
@@ -322,35 +425,35 @@ resource "aws_subnet" "public_subnet" {
   availability_zone       = "us-east-1a"
   cidr_block              = "172.31.80.0/20"
   map_public_ip_on_launch = true
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_ecr_repository" "cab_app" {
   name = "cab-app"
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_ecr_repository" "driver_app" {
   name = "driver-app"
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_ecr_repository" "cab_assignment_app" {
   name = "cab-assignment-app"
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_ecr_repository" "web_app" {
   name = "web-app"
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
