@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -13,25 +13,11 @@ import TableRow from "@mui/material/TableRow";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Avatar from '@mui/material/Avatar';
-import DetailsModal from './modal';
 import { Link } from 'react-router-dom';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { fetchDriver } from '../../store/actions/driverActions';
 
 const TableLayout = ({ rows, columns, tablename }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [selectedRow, setSelectedRow] = useState(null);
-  
-  // const handleOpenModal = (id) => {
-  //   setSelectedRow(id)
-  //   setIsModalOpen(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -117,17 +103,6 @@ const TableLayout = ({ rows, columns, tablename }) => {
                                       {row[column.id]}
                                     </>
                                   )}
-
-                                  {/* (
-                                    <>
-                                      {column.id === 'driverName' || column.id === 'cabModel' ? (
-                                      <> 
-                                        <button onClick={() => {tablename === 'Driver' ? handleOpenModal(row.driverId) : handleOpenModal(row.cabId)}} href='' className="open-modal">{row[column.id]}</button>
-                                        {selectedRow ? <DetailsModal open={isModalOpen} onClose={handleCloseModal} id={selectedRow}/> : (<></>)}
-                                      </>
-                                      ) : (<>{row[column.id]} </>)}
-                                    </>
-                                  )} */}
 
                                 </>
                               )}

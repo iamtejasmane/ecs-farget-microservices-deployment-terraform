@@ -4,6 +4,7 @@ const cors = require("cors")
 const morgan = require("morgan")
 require("colors").enable()
 require("dotenv").config()
+const jwt = require("jsonwebtoken")
 
 // Import routes
 const driverRoutes = require("./routes/driver")
@@ -23,7 +24,6 @@ function authorizeUser(req, res, next) {
     next()
   } else {
     const token = req.headers["token"]
-
     if (!token) {
       res.status(401).json({ message: "Invalid token" })
     } else {
@@ -31,14 +31,14 @@ function authorizeUser(req, res, next) {
         const data = jwt.verify(token, process.env.JWT_SECRET)
         req.id = data.id
         next()
-      } catch (exception) {
+      } catch (error) {
         res.status(401).json({ message: "Invalid token" })
       }
     }
   }
 }
 
-// app.use(authorizeUser)
+app.use(authorizeUser)
 
 // Routes
 app.use("/drivers", driverRoutes)

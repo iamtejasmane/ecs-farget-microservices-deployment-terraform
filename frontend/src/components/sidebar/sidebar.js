@@ -5,10 +5,20 @@ import Avatar from '@mui/material/Avatar';
 import Picture from '../../images/admin.jpg'
 import { Typography } from '@mui/material';
 import SidebarList from './sidebarlist';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/actions/authActions';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 270;
 
 const Sidebar = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        dispatch(logout())
+        navigate('/')
+    }
     return(
         <>
             <Box
@@ -36,12 +46,16 @@ const Sidebar = () => {
                             justifyContent: 'center',
                             p: 1,
                             m: 1,
-                            mt: 4}}
+                            mt: 2}}
                         >
                             <Avatar sx={{width: '129px !important', height: '129px !important'}} alt="Remy Sharp" src={Picture} />
                         </Box>
                         <Typography variant="h6" style={{ textAlign: 'center' }}>
                             <b>Lorem Ipsum</b>
+                        </Typography>
+
+                        <Typography variant="h6" style={{ textAlign: 'center' }}>
+                            <button onClick={handleLogout} >Logout</button>
                         </Typography>
 
                         <SidebarList />

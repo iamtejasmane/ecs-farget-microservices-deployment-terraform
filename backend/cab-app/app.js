@@ -4,7 +4,7 @@ const cors = require("cors")
 const morgan = require("morgan")
 require("dotenv").config()
 require("colors").enable()
-
+const jwt = require("jsonwebtoken")
 // Import routes
 const cabRoutes = require("./routes/cab")
 
