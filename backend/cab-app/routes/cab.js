@@ -1,12 +1,22 @@
 // Import dependencies
 const express = require("express")
 const { Cab } = require("../db/db")
+const { v4: uuidv4 } = require("uuid")
+const multer = require("multer")
+const AWS = require("aws-sdk")
+const fs = require("fs")
 const router = express.Router()
 const AWS = require("aws-sdk")
 const multer = require("multer")
 const { v4: uuidv4 } = require("uuid")
 const fs = require("fs")
 
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+})
+// Configure AWS
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -26,38 +36,38 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 // Routes for Cabs API
-
 // Create a cab
-router.post("/", upload.single("cabImage"),async (req, res) => {
+router.post("/", upload.single("cabImage"), async (req, res) => {
   try {
     const { cabRegistrationNumber, cabModel, cabColour } = req.body
-    
+
     // Process the profile picture file
-    const cabImageFile = req.file
-    let cabImageKey = null
-    if (cabImageFile) {
+    const profilePictureFile = req.file
+    let profilePictureKey = null
+    if (profilePictureFile) {
       // Upload the file to S3
       const uploadParams = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: cabImageFile.filename,
-        Body: fs.readFileSync(cabImageFile.path),
+        Bucket: process.env.S3_BUCKET_NAME_CAB,
+        Key: profilePictureFile.filename,
+        Body: fs.readFileSync(profilePictureFile.path),
       }
 
       const uploadResult = await s3.upload(uploadParams).promise()
 
       // Store the S3 object key in the database
-      cabImageKey = uploadResult.Key
+      profilePictureKey = uploadResult.Key
 
       // Remove the temporary file from the server
-      fs.unlinkSync(cabImageFile.path)
+      fs.unlinkSync(profilePictureFile.path)
     }
+
     const cab = await Cab.create({
       cabRegistrationNumber,
       cabModel,
       cabColour,
-      cabImage : cabImageKey
+      cabImageKey: profilePictureKey,
     })
-    res.json(cab)
+    res.status(201).json(cab)
   } catch (error) {
     console.error("Error creating cab:", error)
     res.status(500).json({ error: "Unable to create cab" })
@@ -79,7 +89,7 @@ router.get("/", async (req, res) => {
 router.get("/:cabId", async (req, res) => {
   try {
     const cabs = await Cab.findByPk(req.params.cabId)
-    if(cabs){
+    if (cabs) {
       res.json(cabs)
     }
     res.status(404).json({ error: "Cab not found" })
@@ -93,34 +103,36 @@ router.put("/:cabId", upload.single("cabImage"), async (req, res) => {
   try {
     const { cabId } = req.params
     const { cabRegistrationNumber, cabModel, cabColour } = req.body
+
     const cab = await Cab.findByPk(cabId)
     if (cab) {
-
+      // Check if a new cab image is provided
       if (req.file) {
         // Delete the previous profile picture from S3 if it exists
-        // if (cab.driverProfilePictureKey) {
-        //   const deleteParams = {
-        //     Bucket: process.env.S3_BUCKET_NAME,
-        //     Key: driver.driverProfilePictureKey,
-        //   }
-        //   await s3.deleteObject(deleteParams).promise()
-        // }
+        if (cab.cabImageKey) {
+          const deleteParams = {
+            Bucket: process.env.S3_BUCKET_NAME_CAB,
+            Key: cab.cabImageKey,
+          }
+          await s3.deleteObject(deleteParams).promise()
+        }
 
         // Upload the new profile picture to S3
         const uploadParams = {
-          Bucket: process.env.S3_BUCKET_NAME,
+          Bucket: process.env.S3_BUCKET_NAME_CAB,
           Key: req.file.filename,
           Body: fs.readFileSync(req.file.path),
         }
         const uploadResult = await s3.upload(uploadParams).promise()
 
-        // Update the profile picture key in the database
-        driver.driverProfilePictureKey = uploadResult.Key
+        // Update the cab image key in the database
+        cab.cabImageKey = uploadResult.Key
 
         // Remove the temporary file from the server
         fs.unlinkSync(req.file.path)
       }
 
+      // Update the cab details
       cab.cabRegistrationNumber = cabRegistrationNumber
       cab.cabModel = cabModel
       cab.cabColour = cabColour
@@ -141,8 +153,18 @@ router.delete("/:cabId", async (req, res) => {
     const { cabId } = req.params
     const cab = await Cab.findByPk(cabId)
     if (cab) {
+      // Delete the cab profile picture from S3 if it exists
+      if (cab.cabImageKey) {
+        const deleteParams = {
+          Bucket: process.env.S3_BUCKET_NAME_CAB,
+          Key: cab.cabImageKey,
+        }
+        await s3.deleteObject(deleteParams).promise()
+      }
+
+      // Delete cab from the database
       await cab.destroy()
-      res.sendStatus(200)
+      res.sendStatus(200).json({ message: "Cab deleted" })
     } else {
       res.status(404).json({ error: "Cab not found" })
     }
