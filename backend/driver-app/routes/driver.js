@@ -29,7 +29,7 @@ const upload = multer({ storage: storage })
 // Create a driver
 router.post("/", upload.single("driverProfilePicture"), async (req, res) => {
   try {
-    const { driverName, driverEmail, driverPhoneNumber } = req.body
+    const { driverName, driverEmail, driverPhoneNumber, driverLicenseNo } = req.body
 
     // Process the profile picture file
     const profilePictureFile = req.file
@@ -56,6 +56,7 @@ router.post("/", upload.single("driverProfilePicture"), async (req, res) => {
       driverEmail,
       driverPhoneNumber,
       driverProfilePictureKey: profilePictureKey,
+      driverLicenseNo
     })
 
     res.status(201).json(driver)
@@ -99,7 +100,7 @@ router.put(
   async (req, res) => {
     try {
       const driverId = req.params.driverId
-      const { driverName, driverEmail, driverPhoneNumber } = req.body
+      const { driverName, driverEmail, driverPhoneNumber, driverLicenseNo } = req.body
 
       const driver = await Driver.findByPk(driverId)
       if (driver) {
@@ -133,6 +134,7 @@ router.put(
         driver.driverName = driverName
         driver.driverEmail = driverEmail
         driver.driverPhoneNumber = driverPhoneNumber
+        driver.driverLicenseNo = driverLicenseNo
         await driver.save()
         res.json(driver)
       } else {
@@ -161,7 +163,7 @@ router.delete("/:driverId", async (req, res) => {
       }
 
       await driver.destroy()
-      res.sendStatus(200).json({ message: "Driver deleted" })
+      res.status(200).json({ message: "Driver deleted" })
     } else {
       res.status(404).json({ error: "Driver not found" })
     }

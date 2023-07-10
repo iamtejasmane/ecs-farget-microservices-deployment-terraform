@@ -13,7 +13,7 @@ const Drivers = () => {
 
     const tableName = "Driver";
     const columns = [
-        { id: "driverProfilePicture", label: "" },
+        { id: "driverProfilePictureKey", label: "" },
         { id: "driverName", label: "Name", align: "center" },
         { id: "driverEmail", label: "email", align: 'center'},
         { id: "driverPhoneNumber", label: "Mobile Number", align: 'center'},

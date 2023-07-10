@@ -13,7 +13,7 @@ const SidebarList = () => {
         <>
             <List sx={{mt:3 , p:3}}>
                 <ListItem>
-                    <ListItemButton component={Link} to="/">
+                    <ListItemButton component={Link} to="/home">
                         <ListItemIcon>
                             <HomeIcon />
                         </ListItemIcon>
@@ -34,6 +34,14 @@ const SidebarList = () => {
                             <CarRentalIcon />
                         </ListItemIcon>
                         <ListItemText primary='Cabs' />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem>
+                    <ListItemButton component={Link} to="/cab-driver">
+                        <ListItemIcon>
+                            <CarRentalIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Cabs-Drivers' />
                     </ListItemButton>
                 </ListItem>
                 </List>
