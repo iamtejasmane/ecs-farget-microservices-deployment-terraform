@@ -29,6 +29,9 @@ jobs:
         with:
           context: frontend/
           build-args: |
+            REACT_APP_CAB_API_URL=${{ secrets.REACT_APP_CAB_API_URL }}
+            REACT_APP_DRIVER_API_URL=${{ secrets.REACT_APP_DRIVER_API_URL }}
+            REACT_APP_CAB_ASSIGN_API_URL=${{ secrets.REACT_APP_CAB_ASSIGN_API_URL }}
             REACT_APP_AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
             REACT_APP_AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             REACT_APP_AWS_REGION=${{ secrets.REACT_APP_AWS_REGION }}
