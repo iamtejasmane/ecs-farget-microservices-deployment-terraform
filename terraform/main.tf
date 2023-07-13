@@ -6,6 +6,7 @@ resource "aws_subnet" "private_subnet_1" {
   cidr_block              = "172.31.16.0/20"
   map_public_ip_on_launch = false
 }
+
 resource "aws_subnet" "private_subnet_2" {
   vpc_id                  = var.vpc_id
   availability_zone       = "us-east-1c"
@@ -15,36 +16,35 @@ resource "aws_subnet" "private_subnet_2" {
 
 resource "aws_db_subnet_group" "mysql_subnet_group" {
   name       = "mysql-subnet-group"
-  subnet_ids = [ aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-} 
-# aws_subnet.public_subnet.id,
+  subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+}
 
 resource "aws_security_group" "mysql_sg" {
   name        = "mysql-sg"
   description = "Security group for RDS MySQL"
 
   ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.ecs_service_security_group.id]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group_rule" "mysql_ingress" {
-  type              = "ingress"
-  from_port         = 3306
-  to_port           = 3306
-  protocol          = "tcp"
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
   source_security_group_id = aws_security_group.mysql_sg.id
-  security_group_id = aws_security_group.ecs_service_security_group.id
+  security_group_id        = aws_security_group.ecs_service_security_group.id
 }
 
 data "aws_vpc" "main_vpc" {
@@ -52,8 +52,8 @@ data "aws_vpc" "main_vpc" {
 }
 
 resource "aws_db_parameter_group" "mysql_parameter_group" {
-  name   = "mysql-parameter-group"
-  family = "mysql5.7"
+  name        = "mysql-parameter-group"
+  family      = "mysql5.7"
   description = "Custom DB parameter group for MySQL 5.7"
 }
 
@@ -83,7 +83,7 @@ resource "aws_db_instance" "mysql_instance" {
   engine               = "mysql"
   engine_version       = "5.7"
   instance_class       = "db.t3.micro"
-  db_name              = var.db_name 
+  db_name              = var.db_name
   username             = var.username
   password             = var.password
   parameter_group_name = aws_db_parameter_group.mysql_parameter_group.name
@@ -92,18 +92,12 @@ resource "aws_db_instance" "mysql_instance" {
   vpc_security_group_ids = [
     aws_security_group.rds_security_group.id
   ]
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
-
 
 # ECS Cluster
 resource "aws_ecs_cluster" "fargate_cluster" {
   name = "afourathon-cluster"
 }
-
 
 resource "aws_ecs_task_definition" "cab_app_task" {
   family                   = "cab-app"
@@ -111,11 +105,10 @@ resource "aws_ecs_task_definition" "cab_app_task" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = "256" 
-  memory = "512"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = <<DEFINITION
-  [
+  container_definitions = jsonencode([
     {
       "name": "cab-app",
       "image": "${aws_ecr_repository.cab_app.repository_url}:latest",
@@ -143,8 +136,7 @@ resource "aws_ecs_task_definition" "cab_app_task" {
         }
       }
     }
-  ]
-  DEFINITION
+  ])
 }
 
 resource "aws_ecs_task_definition" "driver_app_task" {
@@ -153,11 +145,10 @@ resource "aws_ecs_task_definition" "driver_app_task" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = "256" 
-  memory = "512"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = <<DEFINITION
-  [
+  container_definitions = jsonencode([
     {
       "name": "driver-app",
       "image": "${aws_ecr_repository.driver_app.repository_url}:latest",
@@ -185,8 +176,7 @@ resource "aws_ecs_task_definition" "driver_app_task" {
         }
       }
     }
-  ]
-  DEFINITION
+  ])
 }
 
 resource "aws_ecs_task_definition" "cab_assignment_app_task" {
@@ -195,11 +185,10 @@ resource "aws_ecs_task_definition" "cab_assignment_app_task" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = "256" 
-  memory = "512"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = <<DEFINITION
-  [
+  container_definitions = jsonencode([
     {
       "name": "cab-assignment-app",
       "image": "${aws_ecr_repository.cab_assignment_app.repository_url}:latest",
@@ -227,20 +216,68 @@ resource "aws_ecs_task_definition" "cab_assignment_app_task" {
         }
       }
     }
-  ]
-  DEFINITION
+  ])
 }
+
+# Create AWS Cloud Map private DNS namespace
+resource "aws_service_discovery_private_dns_namespace" "private_dns_namespace" {
+  name = "afourathon-private-namespace"
+  vpc  = var.vpc_id
+}
+
+# Create AWS Cloud Map service for cab app
+resource "aws_service_discovery_service" "cab_app_service" {
+  name              = "cab-app-service"
+  namespace_id      = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+    routing_policy = "MULTIVALUE"
+  }
+}
+
+# Create AWS Cloud Map service for driver app
+resource "aws_service_discovery_service" "driver_app_service" {
+  name              = "driver-app-service"
+  namespace_id      = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+    routing_policy = "MULTIVALUE"
+  }
+}
+
+# Create AWS Cloud Map service for cab assignment app
+resource "aws_service_discovery_service" "cab_assignment_app_service" {
+  name              = "cab-assignment-app-service"
+  namespace_id      = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+    routing_policy = "MULTIVALUE"
+  }
+}
+
+# Update web app task definition with environment variables
 resource "aws_ecs_task_definition" "web_app_task" {
   family                   = "web-app"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu = "256" 
-  memory = "512"
+  cpu                      = "256"
+  memory                   = "512"
 
-  container_definitions = <<DEFINITION
-  [
+  container_definitions = jsonencode([
     {
       "name": "web-app",
       "image": "${aws_ecr_repository.web_app.repository_url}:latest",
@@ -252,10 +289,18 @@ resource "aws_ecs_task_definition" "web_app_task" {
       ],
       "memoryReservation": 512,
       "cpu": 256,
-      "environmentFiles": [
+      "environment": [
         {
-          "value": "arn:aws:s3:::afourathon/env_files/.env",
-          "type": "s3"
+          "name": "REACT_APP_CAB_API_URL",
+          "value": aws_service_discovery_service.cab_app_service.arn
+        },
+        {
+          "name": "REACT_APP_DRIVER_API_URL",
+          "value": aws_service_discovery_service.driver_app_service.arn
+        },
+        {
+          "name": "REACT_APP_CAB_ASSIGN_API_URL",
+          "value": aws_service_discovery_service.cab_assignment_app_service.arn
         }
       ],
       "logConfiguration": {
@@ -268,8 +313,7 @@ resource "aws_ecs_task_definition" "web_app_task" {
         }
       }
     }
-  ]
-  DEFINITION
+  ])
 }
 
 resource "aws_ecs_service" "cab_app_service" {
@@ -280,12 +324,11 @@ resource "aws_ecs_service" "cab_app_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.public_subnet.id]
-    security_groups  = [aws_security_group.ecs_service_security_group.id]
+    subnets         = [aws_subnet.public_subnet.id]
+    security_groups = [aws_security_group.ecs_service_security_group.id]
     assign_public_ip = true
   }
 }
-
 
 resource "aws_ecs_service" "driver_app_service" {
   name            = "driver-app-service"
@@ -295,8 +338,8 @@ resource "aws_ecs_service" "driver_app_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.public_subnet.id]
-    security_groups  = [aws_security_group.ecs_service_security_group.id]
+    subnets         = [aws_subnet.public_subnet.id]
+    security_groups = [aws_security_group.ecs_service_security_group.id]
     assign_public_ip = true
   }
 }
@@ -309,8 +352,8 @@ resource "aws_ecs_service" "cab_assignment_app_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.public_subnet.id]
-    security_groups  = [aws_security_group.ecs_service_security_group.id]
+    subnets         = [aws_subnet.public_subnet.id]
+    security_groups = [aws_security_group.ecs_service_security_group.id]
     assign_public_ip = true
   }
 }
@@ -323,8 +366,8 @@ resource "aws_ecs_service" "web_app_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.public_subnet.id]
-    security_groups  = [aws_security_group.ecs_service_security_group.id]
+    subnets         = [aws_subnet.public_subnet.id]
+    security_groups = [aws_security_group.ecs_service_security_group.id]
     assign_public_ip = true
   }
 }
@@ -372,7 +415,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attach
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-
 resource "aws_iam_role" "ecs_task_role" {
   name = "ecs-task-role"
 
@@ -419,41 +461,25 @@ resource "aws_iam_role_policy" "ecs_task_execution_role_policy" {
 POLICY
 }
 
-
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = var.vpc_id
   availability_zone       = "us-east-1a"
   cidr_block              = "172.31.80.0/20"
   map_public_ip_on_launch = true
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
 
 resource "aws_ecr_repository" "cab_app" {
   name = "cab-app"
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
 
 resource "aws_ecr_repository" "driver_app" {
   name = "driver-app"
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
 
 resource "aws_ecr_repository" "cab_assignment_app" {
   name = "cab-assignment-app"
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
 
 resource "aws_ecr_repository" "web_app" {
   name = "web-app"
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
