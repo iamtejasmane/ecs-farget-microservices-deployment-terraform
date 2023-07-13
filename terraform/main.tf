@@ -103,7 +103,7 @@ resource "aws_ecs_task_definition" "cab_app_task" {
   family                   = "cab-app"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
@@ -143,7 +143,7 @@ resource "aws_ecs_task_definition" "driver_app_task" {
   family                   = "driver-app"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
@@ -183,7 +183,7 @@ resource "aws_ecs_task_definition" "cab_assignment_app_task" {
   family                   = "cab-assignment-app"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
@@ -252,7 +252,6 @@ resource "aws_service_discovery_service" "driver_app_service" {
     routing_policy = "MULTIVALUE"
   }
 }
-
 # Create AWS Cloud Map service for cab assignment app
 resource "aws_service_discovery_service" "cab_assignment_app_service" {
   name              = "cab-assignment-app-service"
@@ -272,7 +271,7 @@ resource "aws_ecs_task_definition" "web_app_task" {
   family                   = "web-app"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
