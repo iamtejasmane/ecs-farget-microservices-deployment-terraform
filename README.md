@@ -31,7 +31,7 @@ The Cab Management Application offers the following features:
 
 Before running the application, make sure you have the following installed:
 
-- Node.js
+- Nodejs [Reactjs,expressjs]
 - MySQL database (For, Test,Dev and Prod)
 - Terraform
 - AWS CLI
@@ -45,9 +45,53 @@ Before running the application, make sure you have the following installed:
 
    ```shell
    git clone https://github.com/your-username/cab-management-app.git
-   cd cab-management-app
    ```
+2. Go to the respective applications and install the dependencies:
 
+   ```shell
+   cd backend/cab-app
+   npm install
+   ```
+   Do the same for driver app and cab-assignment app
+   
+3. Install Dependancies for frontend
+   ```shell
+   cd frontend/
+   npm install
+   ```
+4. create .env files in root directory of each backend app and frontend app
+   .env for backend
+    DB_USER=""
+    DB_PASSWORD=""
+    DATABASE=""
+    DB_HOST=""
+    DB_PORT=""
+    JWT_SECRET=""
+    OWNER_EMAIL=""
+    OWNER_PASSWORD=""
+    AWS_ACCESS_KEY_ID=""
+    AWS_SECRET_ACCESS_KEY=""
+    AWS_REGION=""
+    S3_BUCKET_NAME_CAB=""
+
+   .env for frontend
+    REACT_APP_AWS_ACCESS_KEY_ID=
+    REACT_APP_AWS_SECRET_ACCESS_KEY=
+    REACT_APP_AWS_REGION=
+    REACT_APP_S3_BUCKET_NAME="afourathon3images"
+    REACT_APP_CAB_APP="http://localhost:4000"
+    REACT_APP_DRIVER_APP="http://localhost:5000"
+    REACT_APP_CAB_ASSIGNMENT_APP="http://localhost:7000"
+   
+5. To run the application run following command on each app's root directory
+   ```shell
+    npm start
+   ```
+6. To run the tests for backend applications go to root directory of app and run
+   ```shell
+    npm test
+   ```
+   
 # AWS Infrastructure Deployment
 
 This repository contains the Terraform configuration files to deploy an AWS infrastructure that includes an RDS MySQL database, ECS services, IAM Policies, VPC, and Cloud Map services. Follow the instructions below to deploy the infrastructure.
