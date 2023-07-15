@@ -35,11 +35,14 @@ const Login = () => {
       };
     return (
         <>
-            <Box className='form-section'>
-                <Box component="form" onSubmit={handleSubmit(handleOnSubmit)} sx={{width:500}}>
-                    <Typography variant="h4" component="h4" sx={{textAlign: 'center'}}>
-                        Login
+            <Box className='login-form-section'>
+                <Box component="form" onSubmit={handleSubmit(handleOnSubmit)} >
+                    <Typography variant="h5" component="h5" sx={{textAlign: 'center'}}>
+                        OWNER LOGIN
                     </Typography>
+                    <p className='sign-in-text'>
+                        Enter your credentials to access your account
+                    </p>
                     <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
@@ -83,7 +86,7 @@ const Login = () => {
                         </Grid>
                         <Grid >
                         <Button type="submit" variant="outlined" sx={{color: 'black', mt:3, boxShadow: 1}} className='submit-button'>
-                                Login
+                                Sign In
                             </Button>
                         </Grid>
                 </Box>

@@ -8,6 +8,7 @@ import SidebarList from './sidebarlist';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../store/actions/authActions';
 import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
 const drawerWidth = 270;
 
@@ -54,8 +55,8 @@ const Sidebar = () => {
                             <b>Lorem Ipsum</b>
                         </Typography>
 
-                        <Typography variant="h6" style={{ textAlign: 'center' }}>
-                            <button onClick={handleLogout} >Logout</button>
+                        <Typography variant="h6" style={{ textAlign: 'center', mt:1 }}>
+                            <Button onClick={handleLogout} variant="outlined" color="error">Logout</Button>
                         </Typography>
 
                         <SidebarList />

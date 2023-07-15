@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -27,6 +27,9 @@ const myHelper = {
     },
     driverLicenseNo: {
         required: "Driver License is required"
+    },
+    driverProfilePicture:{ 
+        require: "Upload Profile Picture"
     }
   };
 
@@ -36,11 +39,19 @@ const AddDriver = () => {
       });
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+      };
     
       const handleOnSubmit = (evt) => {
-        console.log(evt);
-        dispatch(createDriver(evt))
-        navigate('/drivers')
+          console.log("selectedfile",selectedFile)
+          evt['driverProfilePicture'] = selectedFile;
+          console.log(evt);
+          dispatch(createDriver(evt)).then(() => {
+              navigate('/drivers')
+          })
       };
     return (
         <>
@@ -113,6 +124,14 @@ const AddDriver = () => {
                                 />
                             )}
                             />
+                        </Grid>
+
+                        <Grid item sx={{mt: 3}}>
+                        <input
+                            type="file"
+                            name="driverProfilePicture"
+                            onChange={handleFileChange}
+                        />
                         </Grid>
 
                         <Grid item sx={{mt: 3}}>

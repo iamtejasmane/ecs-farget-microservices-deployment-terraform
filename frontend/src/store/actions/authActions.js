@@ -21,9 +21,7 @@ export const checkAuth = () => {
     return async (dispatch) => {
       try {
         const token = localStorage.getItem('token');
-        console.log("here1")
         if (token) {
-            console.log("here2")
           axios.defaults.headers.common['token'] = `${token}`;
           dispatch({ type: ActionTypes.OWNER_LOGIN, payload: token });
         } else {

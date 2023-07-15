@@ -30,14 +30,15 @@ const upload = multer({ storage: storage })
 router.post("/", upload.single("driverProfilePicture"), async (req, res) => {
   try {
     const { driverName, driverEmail, driverPhoneNumber, driverLicenseNo } = req.body
-
+    // console.log("my req",req)
     // Process the profile picture file
     const profilePictureFile = req.file
+    console.log(profilePictureFile, "file upload")
     let profilePictureKey = null
     if (profilePictureFile) {
       // Upload the file to S3
       const uploadParams = {
-        Bucket: process.env.S3_BUCKET_NAME_DRIVER,
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: profilePictureFile.filename,
         Body: fs.readFileSync(profilePictureFile.path),
       }
@@ -109,7 +110,7 @@ router.put(
           // Delete the previous profile picture from S3 if it exists
           if (driver.driverProfilePictureKey) {
             const deleteParams = {
-              Bucket: process.env.S3_BUCKET_NAME_DRIVER,
+              Bucket:  process.env.S3_BUCKET_NAME,
               Key: driver.driverProfilePictureKey,
             }
             await s3.deleteObject(deleteParams).promise()
@@ -117,7 +118,7 @@ router.put(
 
           // Upload the new profile picture to S3
           const uploadParams = {
-            Bucket: process.env.S3_BUCKET_NAME_DRIVER,
+            Bucket: process.env.S3_BUCKET_NAME,
             Key: req.file.filename,
             Body: fs.readFileSync(req.file.path),
           }
@@ -156,7 +157,7 @@ router.delete("/:driverId", async (req, res) => {
       // Delete the profile picture from S3 if it exists
       if (driver.driverProfilePictureKey) {
         const deleteParams = {
-          Bucket: process.env.S3_BUCKET_NAME_DRIVER,
+          Bucket: process.env.S3_BUCKET_NAME,
           Key: driver.driverProfilePictureKey,
         }
         await s3.deleteObject(deleteParams).promise()

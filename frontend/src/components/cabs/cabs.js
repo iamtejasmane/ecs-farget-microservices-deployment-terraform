@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import TableLayout from '../layout/tablelayout';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAllCabs } from '../../store/actions/cabActions';
@@ -6,10 +6,16 @@ import { fetchAllCabs } from '../../store/actions/cabActions';
 const Cabs = () => {
   const dispatch = useDispatch();
   const cabs = useSelector((state) => state.cabs)
+  const [stateCount, setStateCount] = useState(0);
 
   useEffect(() => {
     dispatch(fetchAllCabs());
-  }, [dispatch]);
+  }, [dispatch, stateCount]);
+
+  const handleState = () => {
+    console.log("stateCount: ", stateCount + 1)
+    setStateCount(stateCount + 1);
+ }
 
 
     const tableName = "Cab";
@@ -21,25 +27,10 @@ const Cabs = () => {
         { id: "edit", label: "", minWidth: 100}
       ];
       
-      const rows = [
-        {
-          profileUrl: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-          name: "Test Driver",
-          email: "test.driver@gmail.com",
-          contact: 9527230546,
-          id: 1
-        },
-        {
-          profileUrl: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-          name: "Test Driver",
-          email: "test.driver@gmail.com",
-          contact: 9527230546,
-          id: 1
-        },
-      ];
+
     return(
         <>
-            <TableLayout rows={cabs} columns={columns} tablename={tableName}/>
+            <TableLayout key={stateCount} rows={cabs} columns={columns} tablename={tableName} handleState={handleState}/>
         </>
     )
 }
