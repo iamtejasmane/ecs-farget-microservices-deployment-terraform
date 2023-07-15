@@ -1,4 +1,4 @@
-import * as React from 'react';
+import {useEffect}from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
@@ -10,6 +10,9 @@ import Typography from '@mui/material/Typography';
 import CarRentalIcon from '@mui/icons-material/CarRental';
 import PeopleIcon from '@mui/icons-material/People';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAllDrivers } from '../store/actions/driverActions';
+import { fetchAllCabs } from '../store/actions/cabActions';
 
 const Home = () => {
     const Item = styled(Paper)(({ theme }) => ({
@@ -19,6 +22,13 @@ const Home = () => {
         marginLeft: '200px',
         marginTop: '10%'
     }));
+    const dispatch = useDispatch();
+    const drivers = useSelector((state) => state.drivers)
+    const cabs = useSelector((state) => state.cabs)
+    useEffect(() => {
+        dispatch(fetchAllDrivers());
+        dispatch(fetchAllCabs())
+      }, [dispatch]);
     return (
         <>
             <Box sx={{ width: '80%' }}>
@@ -33,11 +43,11 @@ const Home = () => {
                             <Box>
                                 <CarRentalIcon sx={{ fontSize: '2rem' }} />
                                 <Typography>
-                                    cabs
+                                    Cabs
                                 </Typography>
                             </Box>
                             <Typography gutterBottom variant="h5">
-                                50
+                                {cabs.length}
                             </Typography>
                         </Box>
 
@@ -57,11 +67,11 @@ const Home = () => {
                             <Box>
                                 <PeopleIcon sx={{ fontSize: '2rem' }} />
                                 <Typography>
-                                    cabs
+                                    Drivers
                                 </Typography>
                             </Box>
                             <Typography gutterBottom variant="h5">
-                                50
+                                {drivers.length}
                             </Typography>
                         </Box>
 

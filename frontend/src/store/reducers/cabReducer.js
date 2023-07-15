@@ -11,6 +11,7 @@ const CabReducer = (state = cabs, action) => {
             return [...cabs,action.payload]
         
         case ActionTypes.UPDATE_CAB:
+            console.log("action payload cab", action.payload)
             return cabs.map((cab) =>
                 cab.cabId === action.payload.cabId ? action.payload : cab
             );

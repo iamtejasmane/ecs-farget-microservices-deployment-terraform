@@ -8,7 +8,7 @@ const PageLayout = ({children}) => {
   return (
     <Box>
       <Box>
-        {location.pathname !== '/'? <Sidebar /> : <React.Fragment />}
+        {location.pathname === '/' || location.pathname === '/404'? <React.Fragment /> : <Sidebar />}
         
       </Box>
       <Box sx={{ml: 33}}>

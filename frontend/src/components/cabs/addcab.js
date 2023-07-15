@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -7,16 +7,18 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-
+import { useDispatch } from 'react-redux';
+import { createCab } from '../../store/actions/cabActions';
+import { useNavigate } from 'react-router-dom';
 
 const myHelper = {
-    cab_model: {
+    cabModel: {
         required: "Cab model / name is Required"
     },
-    cab_number: {
+    cabRegistrationNumber: {
       required: "Cab number is Required"
     },
-    cab_color: {
+    cabColour: {
         required: "Cab color is Required"
     }
   };
@@ -25,9 +27,21 @@ const AddCab = () => {
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
+      const navigate = useNavigate();
+      const dispatch = useDispatch();
+      const [selectedFile, setSelectedFile] = useState(null);
+    
+      const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+      };
     
       const handleOnSubmit = (evt) => {
+        console.log("selectedfile",selectedFile)
+        evt['cabImage'] = selectedFile;
         console.log(evt);
+        dispatch(createCab(evt)).then(() => {
+            navigate('/cabs')
+        })
       };
     return (
         <>
@@ -39,7 +53,7 @@ const AddCab = () => {
                     <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="cab_model"
+                            name="cabModel"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -52,7 +66,7 @@ const AddCab = () => {
                                 fullWidth
                                 label="Cab Model"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.cab_model[error.type] : ""}
+                                helperText={error ? myHelper.cabModel[error.type] : ""}
                                 />
                             )}
                             />
@@ -60,7 +74,7 @@ const AddCab = () => {
                         <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="cab_registration_number"
+                            name="cabRegistrationNumber"
                             defaultValue=""
                             rules={{
                                 required: true,
@@ -72,30 +86,36 @@ const AddCab = () => {
                                 fullWidth
                                 label="Cab Number"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.cab_number[error.type] : ""}
+                                helperText={error ? myHelper.cabRegistrationNumber[error.type] : ""}
                                 />
                             )}
                             />
                         </Grid>
 
                         <Grid item sx={{mt: 3}}>
+                        <input
+                            type="file"
+                            name="cabImage"
+                            onChange={handleFileChange}
+                        />
+                        </Grid>
+
+                        <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
-                            name="cab_color"
+                            name="cabColour"
                             defaultValue=""
                             rules={{
                                 required: true,
-                                maxLength: 10,
-                                minLength: 10
                             }}
                             render={({ field, fieldState: { error } }) => (
                                 <TextField
                                 {...field}
-                                type="number"
+                                type="text"
                                 fullWidth
                                 label="Cab Color"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.cab_color[error.type] : ""}
+                                helperText={error ? myHelper.cabColour[error.type] : ""}
                                 />
                             )}
                             />

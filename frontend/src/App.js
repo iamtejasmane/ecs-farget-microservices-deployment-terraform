@@ -1,6 +1,6 @@
 import "./App.css"
 import { BrowserRouter as Router } from "react-router-dom"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate  } from "react-router-dom"
 import PageLayout from "./components/layout/pagelayout"
 import Home from "./components/home"
 import Drivers from "./components/drivers/drivers"
@@ -12,6 +12,7 @@ import UpdateDriver from "./components/drivers/updatedriver"
 import UpdateCab from "./components/cabs/updateCab"
 import Login from "./components/auth/login"
 import PrivateRoute from "./privateRoute";
+import NotFound from "./components/auth/notFound"
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
             <Route exact path="/addCab" element={<PrivateRoute><AddCab /></PrivateRoute>} />
             <Route exact path="/updateDriver/:id" element={<PrivateRoute><UpdateDriver /></PrivateRoute>} />
             <Route exact path="/updateCab/:id" element={<PrivateRoute><UpdateCab /></PrivateRoute>} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate replace to="/404" />} />
           </Routes>
         </PageLayout>
       </Router>

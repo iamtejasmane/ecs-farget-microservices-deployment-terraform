@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from "react-hook-form";
 import {
   Box,
@@ -10,6 +10,9 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDriver } from '../../store/actions/driverActions';
 import { useParams, useNavigate   } from 'react-router-dom';
+import AWS from 'aws-sdk';
+import Avatar from '@mui/material/Avatar';
+import CircularProgress from '@mui/material/CircularProgress';  
 
 const myHelper = {
     driverName: {
@@ -35,19 +38,59 @@ const UpdateDriver = () => {
     const dispatch = useDispatch();
     const drivers = useSelector(state =>state.drivers);
     const driver = drivers.find((driver) => driver.driverId.toString() === id)
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [images, setImages] = useState([])
+    const [loaded, setLoaded] = useState(false);
+
+    AWS.config.update({
+        credentials: {
+          accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
+        },
+        region: process.env.REACT_APP_AWS_REGION,
+      });
+    
+    const s3 = new AWS.S3();
 
     useEffect(() => {
-        console.log(driver)
+        if(driver){
+            loadImage()
+        }
     },[driver])
+
+    const loadImage = async () => {
+          const params = {
+            Bucket: "afourathon3images",
+            Key: driver.driverProfilePictureKey
+          }
+            try {
+                const data = await s3.getObject(params).promise();
+                const imageBase64 = 'data:image/jpg;base64,' + data.Body.toString('base64');
+                setImages(imageBase64)
+                setLoaded(true)
+          }
+          catch(e){
+            console.log(e)
+          }
+      }
 
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
     
+      const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+      };
+    
       const handleOnSubmit = (evt) => {
+        if(selectedFile){
+          console.log("selectedfile",selectedFile)
+          evt['driverProfilePicture'] = selectedFile;
+        }
         console.log(evt);
-        dispatch(updateDriver(id,evt))
-        navigate('/drivers')
+        dispatch(updateDriver(id,evt)).then(() => {
+            navigate('/drivers')
+        })
       };
     return (
         <>
@@ -56,6 +99,9 @@ const UpdateDriver = () => {
                     <Typography variant="h4" component="h4" sx={{textAlign: 'center'}}>
                         Update Driver details
                     </Typography>
+                    <Box sx={{justifyContent: 'center', display:'flex', mt: 2}}>
+                            {loaded ? <Avatar sx={{ width: '100px !important', height: '75px !important' }} alt="Remy Sharp" variant='square' src={images}/> : <CircularProgress color="inherit" />}
+                    </Box>
                     <Grid item sx={{mt: 3}}>
                             <Controller
                             control={control}
@@ -72,7 +118,7 @@ const UpdateDriver = () => {
                                 fullWidth
                                 label="Driver Name"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.driver_name[error.type] : ""}
+                                helperText={error ? myHelper.driverName[error.type] : ""}
                                 />
                             )}
                             />
@@ -93,7 +139,7 @@ const UpdateDriver = () => {
                                 fullWidth
                                 label="Driver Email"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.email[error.type] : ""}
+                                helperText={error ? myHelper.driverEmail[error.type] : ""}
                                 />
                             )}
                             />
@@ -116,11 +162,12 @@ const UpdateDriver = () => {
                                 fullWidth
                                 label="Driver Mobile no"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.mobile_no[error.type] : ""}
+                                helperText={error ? myHelper.driverPhoneNumber[error.type] : ""}
                                 />
                             )}
                             />
                         </Grid>
+                        
 
                         <Grid item sx={{mt: 3}}>
                             <Controller
@@ -137,10 +184,21 @@ const UpdateDriver = () => {
                                 fullWidth
                                 label="Driver License"
                                 error={error !== undefined}
-                                helperText={error ? myHelper.mobile_no[error.type] : ""}
+                                helperText={error ? myHelper.driverLicenseNo[error.type] : ""}
                                 />
                             )}
                             />
+                        </Grid>
+
+                        <Grid item sx={{mt: 1}}>
+                            <div>
+                                <input
+                                    type="file"
+                                    name="driverProfilePicture"
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+                            <Typography className='warning-text'>If you want to update driver profile picture, select new image</Typography>
                         </Grid>
 
                         <Grid >

@@ -1,10 +1,8 @@
 import axios from "axios"
 
-const cabAppUrl = process.env.CAB_APP || "http://localhost:4000"
-const driverAppUrl = process.env.DRIVER_APP || "http://localhost:5000"
-const cabDriverAppUrl =
-  process.env.CAB_ASSIGNMENT_APP || "http://localhost:6000"
-
+const cabAppUrl = process.env.REACT_APP_CAB_APP
+const driverAppUrl = process.env.REACT_APP_DRIVER_APP 
+const cabDriverAppUrl = process.env.REACT_APP_CAB_ASSIGNMENT_APP
 
 export const loginOwner = (data) => {
   return axios.post(`${driverAppUrl}/owner/login`, data)
@@ -19,11 +17,19 @@ export const fetchDriver = (id) => {
 }
 
 export const createDriver = (data) => {
-  return axios.post(`${driverAppUrl}/drivers`, data)
+  return axios.post(`${driverAppUrl}/drivers`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }
 
 export const updateDriver = (id, data) => {
-  return axios.put(`${driverAppUrl}/drivers/${id}`, data)
+  return axios.put(`${driverAppUrl}/drivers/${id}`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }
 
 export const deleteDriver = (id) => {
@@ -41,23 +47,31 @@ export const fetchCab = (id) => {
 }
 
 export const createCab = (data) => {
-    return axios.post(`${cabAppUrl}/cabs`, data)
+    return axios.post(`${cabAppUrl}/cabs`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
 }
 
 export const updateCab = (id,data) => {
-    return axios.put(`${cabAppUrl}/cabs/${id}`, data)
+    return axios.put(`${cabAppUrl}/cabs/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
 }
 
 export const deleteCab = (id) => {
     return axios.delete(`${cabAppUrl}/cabs/${id}`)
 }
 
-export const getCabDrivers = () => {
+export const fetchCabDrivers = async () => {
   return axios.get(`${cabDriverAppUrl}/assignments`)
 }
 
 export const assignCabDriver = (data) => {
-  return axios.get(`${cabDriverAppUrl}/assignments`, data)
+  return axios.post(`${cabDriverAppUrl}/assignments`, data)
 }
 
 export const updateCabDriverAssignment = (id,data) => {

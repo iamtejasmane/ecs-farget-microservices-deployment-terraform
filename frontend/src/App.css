@@ -1,4 +1,12 @@
-    .logo{
+body{
+    overflow: hidden;
+}
+
+.sign-in-text{
+    text-align: center;
+}
+
+.logo{
     font-style: normal;
     font-weight: bolder;
     font-size: 22px;
@@ -42,6 +50,14 @@
     margin-top: 10%;
 }
 
+.login-form-section{
+    margin-top: 10%;
+    margin-left: 17%;
+    background: rgba(242, 234, 225, 0.32);
+    width: 40%;
+    padding: 50px;
+}
+
 .submit-button{
     border-color: black !important;
     width: 500px;
@@ -54,4 +70,9 @@
     margin:0;
     padding:0;
     cursor: pointer;
+}
+
+.warning-text{
+    font-size: 10px !important;
+    color: red;
 }

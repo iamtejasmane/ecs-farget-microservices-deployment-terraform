@@ -4,6 +4,7 @@ const cors = require("cors")
 const morgan = require("morgan")
 require("colors").enable()
 require("dotenv").config()
+const bodyParser = require('body-parser');
 const jwt = require("jsonwebtoken")
 
 // Import routes
@@ -17,6 +18,8 @@ const app = express()
 app.use(express.json())
 app.use(cors("*"))
 app.use(morgan("combined"))
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Middleware function for user authentication and authorization
 function authorizeUser(req, res, next) {

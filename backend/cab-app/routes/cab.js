@@ -38,13 +38,13 @@ router.post("/", upload.single("cabImage"), async (req, res) => {
     if (profilePictureFile) {
       // Upload the file to S3
       const uploadParams = {
-        Bucket: process.env.S3_BUCKET_NAME_CAB,
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: profilePictureFile.filename,
         Body: fs.readFileSync(profilePictureFile.path),
       }
 
       const uploadResult = await s3.upload(uploadParams).promise()
-
+      console.log(uploadResult)
       // Store the S3 object key in the database
       profilePictureKey = uploadResult.Key
 
@@ -90,7 +90,7 @@ router.get("/:cabId", async (req, res) => {
   }
 })
 // Update a cab
-router.put("/:cabId", async (req, res) => {
+router.put("/:cabId",  upload.single("cabImage"), async (req, res) => {
   try {
     const { cabId } = req.params
     const { cabRegistrationNumber, cabModel, cabColour } = req.body
@@ -102,7 +102,7 @@ router.put("/:cabId", async (req, res) => {
         // Delete the previous profile picture from S3 if it exists
         if (cab.cabImageKey) {
           const deleteParams = {
-            Bucket: process.env.S3_BUCKET_NAME_CAB,
+            Bucket: process.env.S3_BUCKET_NAME,
             Key: cab.cabImageKey,
           }
           await s3.deleteObject(deleteParams).promise()
@@ -110,7 +110,7 @@ router.put("/:cabId", async (req, res) => {
 
         // Upload the new profile picture to S3
         const uploadParams = {
-          Bucket: process.env.S3_BUCKET_NAME_CAB,
+          Bucket: process.env.S3_BUCKET_NAME,
           Key: req.file.filename,
           Body: fs.readFileSync(req.file.path),
         }
@@ -147,7 +147,7 @@ router.delete("/:cabId", async (req, res) => {
       // Delete the cab profile picture from S3 if it exists
       if (cab.cabImageKey) {
         const deleteParams = {
-          Bucket: process.env.S3_BUCKET_NAME_CAB,
+          Bucket: process.env.S3_BUCKET_NAME,
           Key: cab.cabImageKey,
         }
         await s3.deleteObject(deleteParams).promise()
@@ -155,7 +155,7 @@ router.delete("/:cabId", async (req, res) => {
 
       // Delete cab from the database
       await cab.destroy()
-      res.sendStatus(200).json({ message: "Cab deleted" })
+      res.status(200).json({ message: "Cab deleted" })
     } else {
       res.status(404).json({ error: "Cab not found" })
     }
