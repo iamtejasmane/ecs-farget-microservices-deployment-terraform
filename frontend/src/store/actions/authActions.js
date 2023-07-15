@@ -13,6 +13,8 @@ export const login = (data) => {
         }
         catch(e){
             console.log("error" , e);
+            const errorMessage = e.response.data.error;
+            dispatch({ type: ActionTypes.LOGIN_ERROR, payload: errorMessage })
         }
     }
 }

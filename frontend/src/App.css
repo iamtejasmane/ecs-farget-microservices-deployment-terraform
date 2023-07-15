@@ -76,3 +76,7 @@ body{
     font-size: 10px !important;
     color: red;
 }
+.error-text{
+    color: red;
+    text-align: center;
+}

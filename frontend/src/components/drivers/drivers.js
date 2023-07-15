@@ -12,6 +12,7 @@ const Drivers = () => {
     dispatch(fetchAllDrivers());
   }, [dispatch,stateCount]);
 
+  //to Re-render the component and getting updated values from store
   const handleState = () => {
     setStateCount(stateCount + 1);
  }

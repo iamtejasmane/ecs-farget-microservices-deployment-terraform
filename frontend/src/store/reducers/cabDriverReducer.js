@@ -14,12 +14,12 @@ const CabDriverReducer = (state = assignments, action) => {
         
         case ActionTypes.UPDATE_ASSIGNMENT:
             console.log("action payload", action.payload)
-            return assignments.map((driver) =>
-                driver.driverId === action.payload.driverId ? action.payload : driver
+            return assignments.map((assignment) =>
+                assignment.cabAssignmentId === action.payload.cabAssignmentId ? action.payload : assignment
             );
 
         case ActionTypes.DELETE_ASSIGNMENT:
-            return assignments.filter((driver) => driver.driverId !== action.payload)
+            return assignments.filter((assignment) => assignment.cabAssignmentId !== action.payload)
     
         default:
             return state;

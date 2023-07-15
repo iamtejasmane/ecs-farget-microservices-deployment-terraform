@@ -75,9 +75,9 @@ export const assignCabDriver = (data) => {
 }
 
 export const updateCabDriverAssignment = (id,data) => {
-  return axios.get(`${cabDriverAppUrl}/assignments/${id}`, data)
+  return axios.put(`${cabDriverAppUrl}/assignments/${id}`, data)
 }
 
 export const deleteCabDriverAssignment = (id) => {
-  return axios.get(`${cabDriverAppUrl}/assignments/${id}`)
+  return axios.delete(`${cabDriverAppUrl}/assignments/${id}`, id)
 }

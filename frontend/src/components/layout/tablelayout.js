@@ -45,7 +45,6 @@ const TableLayout = ({ rows, columns, tablename, handleState }) => {
   useEffect(() => {
     console.log("rows", rows)
     if (rows.length) {
-      console.log("calling loadImages")
       loadImages()
     }
   }, [rows])
@@ -58,7 +57,7 @@ const TableLayout = ({ rows, columns, tablename, handleState }) => {
   const loadImages = async () => {
     const imagePromises = rows.map(async (row) => {
       const params = {
-        Bucket: "afourathon3images",
+        Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
         Key: ""
         }
         tablename === 'Driver' ? params.Key = row.driverProfilePictureKey : params.Key = row.cabImageKey
