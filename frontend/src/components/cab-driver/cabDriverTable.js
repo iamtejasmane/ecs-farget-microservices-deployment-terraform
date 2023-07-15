@@ -16,14 +16,18 @@ import Avatar from '@mui/material/Avatar';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import AssignDriverModal from './cabDriverAssignment';
+import { useDispatch } from 'react-redux';
+import { deleteCabDriverAssignment } from '../../store/actions/cabDriverActions';
 
 
-const CabDriverTable = ({rows, columns}) => {
+const CabDriverTable = ({rows, columns, handleState}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
         };
@@ -32,6 +36,15 @@ const CabDriverTable = ({rows, columns}) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
       };
+    
+    const deleteAssignment = (id) => {
+        console.log(id)
+        dispatch(deleteCabDriverAssignment(id)).then(()=> {
+            alert("Assignment deleted")
+            handleState()
+            navigate('/cab-driver')
+        })
+    }
 
 
     return(
@@ -93,9 +106,9 @@ const CabDriverTable = ({rows, columns}) => {
                                             <TableCell key={column.id} align={column.align}>
                                             {column.id === 'edit' ? (
                                                 <>
-                                                <Box>
+                                                <Button onClick={() => deleteAssignment(row['driverId'])}>
                                                     <DeleteIcon sx={{ width: 50 }} />
-                                                </Box>
+                                                </Button>
                                                 </>
                                             ) : (
                                                 <>

@@ -62,7 +62,7 @@ const UpdateCab = ({}) => {
     
       const loadImage = async () => {
         const params = {
-          Bucket: "afourathon3images",
+          Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
           Key: cab.cabImageKey
         }
           try {

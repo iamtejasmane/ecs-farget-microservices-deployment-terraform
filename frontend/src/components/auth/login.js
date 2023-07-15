@@ -7,7 +7,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector} from 'react-redux';
 import { login } from '../../store/actions/authActions';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,9 +27,9 @@ const Login = () => {
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
       });
+    const errorMessage = useSelector(state => state.auth.errorMessage);
     
       const handleOnSubmit = async (evt) => {
-        console.log(evt);
         await dispatch(login(evt))
         navigate("/home")
       };
@@ -89,6 +89,7 @@ const Login = () => {
                                 Sign In
                             </Button>
                         </Grid>
+                        {errorMessage && <p className='error-text'>{errorMessage}, Please provide Correct Credentials</p>}
                 </Box>
             </Box>
         </>
