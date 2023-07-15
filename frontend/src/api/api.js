@@ -6,7 +6,7 @@ const cabDriverAppUrl = process.env.REACT_APP_CAB_ASSIGNMENT_APP
 
 export const loginOwner = (data) => {
   return axios.post(`${driverAppUrl}/owner/login`, data)
-}  
+}
 
 export const fetchDrivers = () => {
   return axios.get(`${driverAppUrl}/drivers`)
@@ -36,14 +36,13 @@ export const deleteDriver = (id) => {
   return axios.delete(`${driverAppUrl}/drivers/${id}`)
 }
 
-
 export const fetchCabs = () => {
-    return axios.get(`${cabAppUrl}/cabs`)
+  return axios.get(`${cabAppUrl}/cabs`)
 }
 
 export const fetchCab = (id) => {
-    console.log(`${cabAppUrl}/cabs/${id}`)
-    return axios.get(`${cabAppUrl}/cabs/${id}`)
+  console.log(`${cabAppUrl}/cabs/${id}`)
+  return axios.get(`${cabAppUrl}/cabs/${id}`)
 }
 
 export const createCab = (data) => {
@@ -63,7 +62,7 @@ export const updateCab = (id,data) => {
 }
 
 export const deleteCab = (id) => {
-    return axios.delete(`${cabAppUrl}/cabs/${id}`)
+  return axios.delete(`${cabAppUrl}/cabs/${id}`)
 }
 
 export const fetchCabDrivers = async () => {
@@ -74,7 +73,7 @@ export const assignCabDriver = (data) => {
   return axios.post(`${cabDriverAppUrl}/assignments`, data)
 }
 
-export const updateCabDriverAssignment = (id,data) => {
+export const updateCabDriverAssignment = (id, data) => {
   return axios.get(`${cabDriverAppUrl}/assignments/${id}`, data)
 }
 
