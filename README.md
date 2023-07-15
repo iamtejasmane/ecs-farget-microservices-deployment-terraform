@@ -1,4 +1,4 @@
-# Cab Management Application - AFourathon
+# Cab Management Application - AFour's Hackathon
 
 The Cab Management Application is a cloud-based solution that allows users to manage drivers, cabs, and their assignments. It provides an easy-to-use interface for creating, updating, and deleting driver and cab records, as well as assigning drivers to cabs. The application is built using Express.js, Sequelize ORM, and MySQL database.
 
