@@ -27,6 +27,15 @@ The Cab Management Application offers the following features:
 
 ![Workflow Diagram](./artifacts/architecture/Afourathon%20Architecture.jpeg)
 
+## Figma Link for the frontend design
+https://www.figma.com/file/fD3GXSJ5nAumySx7MFFwRp/Afourathon?type=design&node-id=0%3A1&mode=design&t=gDZU9NjmIiO2Zv2Y-1
+
+## Future Scope
+1.	Multiple owner support: This will support multiple owners at the same time and have their own drivers and cabs data.
+2.	Google Map integration: Live tracking of the cab.
+3.	Infrastructure Automation: Cloud infrastructure automation using GitOps Workflow or ArgoCD
+4.	Driver Portal: Driver Portal to register themselves to different Cab Agencies
+
 ## Prerequisites
 
 Before running the application, make sure you have the following installed:
@@ -212,3 +221,7 @@ Note: Make sure to disable or modify the workflows for each app if you no longer
 ## Additional Workflows
 
 Repeat the above steps for each app's workflow file (`driver-app.yaml`, `cab-assignment-app.yaml`, `web-app.yaml`) to deploy the respective apps to AWS ECS Fargate.
+
+## Contact us
+Tejas Mane: tejasmane485@gmail.com
+Abhishek Lale: abhisheklale181@gmail.com
