@@ -221,3 +221,7 @@ Note: Make sure to disable or modify the workflows for each app if you no longer
 ## Additional Workflows
 
 Repeat the above steps for each app's workflow file (`driver-app.yaml`, `cab-assignment-app.yaml`, `web-app.yaml`) to deploy the respective apps to AWS ECS Fargate.
+
+## Contact us
+Tejas Mane: tejasmane485@gmail.com
+Abhishek Lale: abhisheklale181@gmail.com
