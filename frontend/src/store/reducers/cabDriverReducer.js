@@ -1,25 +1,66 @@
 import { ActionTypes } from "../constants/action-types";
 
-const assignments = []
+const initialState = {
+    assignments: [],
+    drivers: [],
+    cabs: [],
+    error: null,
+  };
 
-const CabDriverReducer = (state = assignments, action) => {
+const CabDriverReducer = (state = initialState, action) => {
     switch (action.type) {
         case ActionTypes.FETCH_CAB_DRIVERS:
-            console.log("Called fetch cab drivers")
-            return action.payload
+            return {
+                ...state,
+                assignments: action.payload,
+                error: null,
+              };
         
         case ActionTypes.ASSIGN_CAB_DRIVER:
-            console.log("Action payload post assignment", [...assignments,action.payload])
-            return [...assignments,action.payload]
+            return {
+                ...state,
+                assignments: [...state.assignments, action.payload],
+                error: null,
+              };
+        
+        case ActionTypes.FETCH_UNASSIGNED_DRIVERS:
+            return {
+                ...state,
+                drivers: action.payload.drivers,
+                error: null
+            }
+        
+        case ActionTypes.FETCH_UNASSIGNED_CABS:
+            return {
+                ...state,
+                cabs: action.payload.cabs,
+                error: null
+            }
+        case ActionTypes.FETCH_CAB_DRIVERS_ERROR:
+        case ActionTypes.ASSIGN_CAB_DRIVER_ERROR:
+        case ActionTypes.UPDATE_CAB_DRIVER_ASSIGNMENT_ERROR:
+            return {
+              ...state,
+              error: action.payload,
+            };
         
         case ActionTypes.UPDATE_ASSIGNMENT:
-            console.log("action payload", action.payload)
-            return assignments.map((assignment) =>
+            const updatedAssignments = state.assignments.map((assignment) =>
                 assignment.cabAssignmentId === action.payload.cabAssignmentId ? action.payload : assignment
             );
+            return {
+                ...state,
+                assignments: updatedAssignments,
+                error: null,
+            };
 
         case ActionTypes.DELETE_ASSIGNMENT:
-            return assignments.filter((assignment) => assignment.cabAssignmentId !== action.payload)
+            const updatedCabDrivers =  state.assignments.filter((assignment) => assignment.cabAssignmentId !== action.payload)
+            return {
+                ...state,
+                assignments: updatedCabDrivers,
+                error: null,
+              };
     
         default:
             return state;

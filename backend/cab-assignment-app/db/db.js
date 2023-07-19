@@ -34,11 +34,11 @@ const Driver = driverModel(sequelize, DataTypes)
 const CabAssignment = assignmentModel(sequelize, DataTypes)
 
 // Associations
-Driver.hasOne(CabAssignment, { foreignKey: "driverId" })
-CabAssignment.belongsTo(Driver, { foreignKey: "driverId" })
+Driver.hasOne(CabAssignment, { foreignKey: "driverId", onDelete: 'CASCADE' })
+CabAssignment.belongsTo(Driver, { foreignKey: "driverId", onDelete: 'CASCADE' })
 
-Cab.hasOne(CabAssignment, { foreignKey: "cabId" })
-CabAssignment.belongsTo(Cab, { foreignKey: "cabId" })
+Cab.hasOne(CabAssignment, { foreignKey: "cabId", onDelete: 'CASCADE' })
+CabAssignment.belongsTo(Cab, { foreignKey: "cabId", onDelete: 'CASCADE' })
 
 // Create the tables in the database (if they don't exist)
 sequelize

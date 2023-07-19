@@ -2,13 +2,10 @@
 const express = require("express")
 const { Driver, Cab, CabAssignment } = require("../db/db")
 const router = express.Router()
+const { Op } = require('sequelize');
 
-// Routes for assign cab API
 
-//get assigned cab-drivers
-router.get("/", async (req,res) => {
-  try{
-    const assignments = await CabAssignment.findAll();
+const getCabsAndDrivers = async (assignments) => {
     const driverIds = assignments.map((assignment) => assignment.driverId);
     const cabIds = assignments.map((assignment) => assignment.cabId);
     const drivers = await Driver.findAll({
@@ -19,10 +16,19 @@ router.get("/", async (req,res) => {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       where: { cabId: cabIds }
     });
+    return {drivers , cabs}
+}
+// Routes for assign cab API
+
+//get assigned cab-drivers
+router.get("/", async (req,res) => {
+  try{
+    const assignments = await CabAssignment.findAll();
+    const cabsAndDrivers = await getCabsAndDrivers(assignments)
     const response = [];
     for (const assignment of assignments) {
-      const driver = drivers.find((driver) => driver.driverId === assignment.driverId);
-      const cab = cabs.find((cab) => cab.cabId === assignment.cabId);
+      const driver = cabsAndDrivers.drivers.find((driver) => driver.driverId === assignment.driverId);
+      const cab = cabsAndDrivers.cabs.find((cab) => cab.cabId === assignment.cabId);
       if (driver && cab) {
         response.push({
           driverId: driver.driverId,
@@ -41,6 +47,28 @@ router.get("/", async (req,res) => {
   }
 })
 
+//Get unassigned drivers
+router.get("/unassigned-drivers" , async(req,res) => {
+  const assignments = await CabAssignment.findAll();
+  const driverIds = assignments.map((assignment) => assignment.driverId);
+    const drivers = await Driver.findAll({
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      where: { driverId: { [Op.notIn]: driverIds } }
+    });
+  return res.status(200).json({drivers})
+})
+
+// Get unassigned cabs
+router.get("/unassigned-cabs" , async(req,res) => {
+  const assignments = await CabAssignment.findAll();
+  const cabIds = assignments.map((assignment) => assignment.cabId);
+    const cabs = await Cab.findAll({
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      where: { cabId: { [Op.notIn]: cabIds } }
+    });
+  return res.status(200).json({cabs})
+})
+
 // Assign a cab to a driver
 router.post("/", async (req, res) => {
   try {
@@ -49,13 +77,16 @@ router.post("/", async (req, res) => {
     // Check if the driver and cab exist
     const driver = await Driver.findByPk(driverId)
     const cab = await Cab.findByPk(cabId)
-    if (!driver || !cab) {
-      return res.status(404).json({ error: "Driver or cab not found" })
+    if (!driver) {
+      return res.status(404).json({ error: "Driver not found" })
+    }
+    if (!cab) {
+      return res.status(404).json({ error: "Cab not found" })
     }
 
     // Check if there is an existing assignment for the driver
     const existingAssignment = await CabAssignment.findOne({
-      where: { driverId },
+      where: { driverId } ,
     })
     if (existingAssignment) {
       return res.status(400).json({ error: "Driver already assigned to a cab" })
@@ -100,8 +131,11 @@ router.put("/:driverId", async (req, res) => {
     // Check if the driver and cab exist
     const driver = await Driver.findByPk(driverId)
     const cab = await Cab.findByPk(cabId)
-    if (!driver || !cab) {
-      return res.status(404).json({ error: "Driver or cab not found" })
+    if (!driver) {
+      return res.status(404).json({ error: "Driver not found" })
+    }
+    if (!cab) {
+      return res.status(404).json({ error: "Cab not found" })
     }
 
     // Find and update the assignment

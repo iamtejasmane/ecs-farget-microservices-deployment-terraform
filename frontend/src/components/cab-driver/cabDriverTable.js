@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -10,17 +10,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Avatar from '@mui/material/Avatar';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import AssignDriverModal from './cabDriverAssignment';
 import { useDispatch } from 'react-redux';
 import { deleteCabDriverAssignment } from '../../store/actions/cabDriverActions';
+import { fetchAllCabDrivers, fetchUnassignedDrivers, fetchUnassignedCabs } from '../../store/actions/cabDriverActions';
 
 
-const CabDriverTable = ({rows, columns, handleState}) => {
+const CabDriverTable = ({rows, columns}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [open, setOpen] = useState(false);
@@ -41,7 +39,9 @@ const CabDriverTable = ({rows, columns, handleState}) => {
         console.log(id)
         dispatch(deleteCabDriverAssignment(id)).then(()=> {
             alert("Assignment deleted")
-            handleState()
+            dispatch(fetchAllCabDrivers())
+            dispatch(fetchUnassignedDrivers())
+            dispatch(fetchUnassignedCabs())
             navigate('/cab-driver')
         })
     }
