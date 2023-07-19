@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllCabDrivers } from '../../store/actions/cabDriverActions';
 import CabDriverTable from './cabDriverTable';
 
 const CabDriver = () => {
     const dispatch = useDispatch();
-    const assignments = useSelector((state) => state.assignments)
-    const [stateCount, setStateCount] = useState(0);
+    const assignments = useSelector((state) => state.assignments.assignments)
+    const error = useSelector((state) => state.assignments.error)
    
     const columns = [
         { id: "driverName", label: "Name", align: "center" },
@@ -14,19 +14,16 @@ const CabDriver = () => {
         { id: "edit", label: "", minWidth: 100}
       ];
 
-      //to Re-render the component and getting updated values from store
-      const handleState = () => {
-        setStateCount(stateCount + 1);
-    }
     
     useEffect(() => {
         dispatch(fetchAllCabDrivers());
-      }, [dispatch,stateCount]);
+      }, [dispatch]);
 
 
     return(
         <>
-           <CabDriverTable rows={assignments} columns = {columns} handleState={handleState}/>
+          {error ? alert(error.error) : <></>}
+           <CabDriverTable rows={assignments} columns = {columns} />
         </>
     )
 }

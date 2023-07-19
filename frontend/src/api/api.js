@@ -70,6 +70,14 @@ export const fetchCabDrivers = async () => {
   return axios.get(`${cabDriverAppUrl}/assignments`)
 }
 
+export const fetchUnassignedDrivers = async () => {
+  return axios.get(`${cabDriverAppUrl}/assignments/unassigned-drivers`)
+}
+
+export const fetchUnassignedCabs = async () => {
+  return axios.get(`${cabDriverAppUrl}/assignments/unassigned-cabs`)
+}
+
 export const assignCabDriver = (data) => {
   return axios.post(`${cabDriverAppUrl}/assignments`, data)
 }

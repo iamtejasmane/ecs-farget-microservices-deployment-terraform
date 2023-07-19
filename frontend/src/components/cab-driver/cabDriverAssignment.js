@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -11,8 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { assignCabDriver } from '../../store/actions/cabDriverActions';
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate   } from 'react-router-dom';
-import { fetchAllDrivers } from '../../store/actions/driverActions';
-import { fetchAllCabs } from '../../store/actions/cabActions';
+import { fetchAllCabDrivers, fetchUnassignedDrivers, fetchUnassignedCabs } from '../../store/actions/cabDriverActions';
 
 const style = {
     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)', width: 500, bgcolor: 'background.paper',
@@ -20,25 +19,27 @@ const style = {
 };
 
 const AssignDriverModal = ({ handleClose, open }) => {
-    const drivers = useSelector((state) => state.drivers);
-    const cabs = useSelector((state) => state.cabs);
+    const drivers = useSelector((state) => state.assignments.drivers);
+    const cabs = useSelector((state) => state.assignments.cabs);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchUnassignedDrivers());
+        dispatch(fetchUnassignedCabs())
+      }, [dispatch]);
+
     const { control, handleSubmit } = useForm({
         reValidateMode: "onBlur"
     });
 
-    useEffect(() => {
-        dispatch(fetchAllDrivers());
-        dispatch(fetchAllCabs())
-      }, [dispatch]);
-
     const handleOnSubmit = (evt) => {
-        console.log(evt)
-
         dispatch(assignCabDriver(evt)).then(() => {
             handleClose()
             navigate('/cab-driver')
+            dispatch(fetchAllCabDrivers())
+            dispatch(fetchUnassignedDrivers())
+            dispatch(fetchUnassignedCabs())
         })
     }
 
